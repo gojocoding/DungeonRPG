@@ -1,37 +1,33 @@
 package it.unicam.cs.mpgc.rpg126277.model;
 
+import it.unicam.cs.mpgc.rpg126277.world.Room;
+
 import java.util.List;
 
 public class GameState {
 
     private Player player;
-
     private int currentRoomIndex;
-
-    private List<RoomType> dungeon;
-
+    private List<Room> dungeon;
     private boolean gameOver;
 
-    public GameState(Player player, List<RoomType> dungeon) {
+    public GameState(Player player, List<Room> dungeon) {
         this.player = player;
         this.dungeon = dungeon;
         this.currentRoomIndex = 0;
         this.gameOver = false;
     }
 
-
     public void nextRoom() {
-        if (currentRoomIndex < dungeon.size() - 1) {
-            currentRoomIndex++;
-        } else {
+        currentRoomIndex++;
+        if (currentRoomIndex >= dungeon.size()) {
             gameOver = true;
         }
     }
 
-    public RoomType getCurrentRoom() {
+    public Room getCurrentRoom() {
         return dungeon.get(currentRoomIndex);
     }
-
 
     public Player getPlayer() {
         return player;
@@ -49,11 +45,11 @@ public class GameState {
         this.currentRoomIndex = currentRoomIndex;
     }
 
-    public List<RoomType> getDungeon() {
+    public List<Room> getDungeon() {
         return dungeon;
     }
 
-    public void setDungeon(List<RoomType> dungeon) {
+    public void setDungeon(List<Room> dungeon) {
         this.dungeon = dungeon;
     }
 

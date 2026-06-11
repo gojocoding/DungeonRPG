@@ -4,13 +4,14 @@ public class Player {
 
     private String name;
     private CharacterClass characterClass;
-
     private int level;
     private int xp;
-
     private int hp;
     private int maxHp;
     private int attack;
+
+    public Player() {
+    }
 
     public Player(String name, CharacterClass characterClass) {
         this.name = name;

@@ -1,7 +1,12 @@
 package it.unicam.cs.mpgc.rpg126277.world;
 
-public class BossRoom implements Room {
+import it.unicam.cs.mpgc.rpg126277.model.Player;
 
+public class BossRoom implements Room {
+    @Override
+    public RoomType getType() {
+        return RoomType.BOSS;
+    }
     @Override
     public RoomResult enter(Player player) {
 

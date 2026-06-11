@@ -5,7 +5,10 @@ import it.unicam.cs.mpgc.rpg126277.model.Player;
 import java.util.Random;
 
 public class TreasureRoom implements Room {
-
+    @Override
+    public RoomType getType() {
+        return RoomType.TREASURE;
+    }
     @Override
     public RoomResult enter(Player player) {
 

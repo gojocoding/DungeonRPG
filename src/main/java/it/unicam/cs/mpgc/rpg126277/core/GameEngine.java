@@ -13,11 +13,14 @@ public class GameEngine {
         this.gameState = gameState;
     }
 
-    public RoomResult playNextRoom(Room room) {
+    public RoomResult playNextRoom() {
 
         Player player = gameState.getPlayer();
 
+        Room room = gameState.getCurrentRoom();
+
         RoomResult result = room.enter(player);
+
         gameState.nextRoom();
 
         if (!player.isAlive()) {
