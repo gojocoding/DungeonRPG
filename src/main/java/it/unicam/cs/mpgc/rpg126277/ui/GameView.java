@@ -26,7 +26,13 @@ public class GameView extends Application {
 
         GameState state = TestGameFactory.createTestGame();
         engine = new GameEngine(state);
-
+        Button restartBtn = new Button("New Game");
+        restartBtn.setOnAction(e -> {
+            GameState newState = TestGameFactory.createTestGame();
+            engine = new GameEngine(newState);
+            resultInfo.setText("");
+            updateUI();
+        });
         Button nextRoomBtn = new Button("Next Room");
         Button saveBtn = new Button("Save");
         Button loadBtn = new Button("Load");
@@ -46,7 +52,8 @@ public class GameView extends Application {
                 resultInfo,
                 nextRoomBtn,
                 saveBtn,
-                loadBtn
+                loadBtn,
+                restartBtn
         );
 
         updateUI();
@@ -54,12 +61,16 @@ public class GameView extends Application {
         stage.setScene(new Scene(root, 400, 300));
         stage.setTitle("RPG Dungeon Crawler");
         stage.show();
+
     }
 
     private void playTurn() {
-
         if (engine.isGameOver()) {
-            resultInfo.setText("GAME OVER");
+            if (engine.isVictory()) {
+                resultInfo.setText("YOU WIN!");
+            } else {
+                resultInfo.setText("GAME OVER");
+            }
             return;
         }
 
@@ -83,5 +94,4 @@ public class GameView extends Application {
                 "Room: " + state.getCurrentRoomIndex()
         );
     }
-
 }

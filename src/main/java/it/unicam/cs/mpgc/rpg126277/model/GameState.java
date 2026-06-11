@@ -14,18 +14,28 @@ public class GameState {
     private int currentRoomIndex;
     private List<Room> dungeon;
     private boolean gameOver;
+    private boolean victory;
 
     public GameState(Player player, List<Room> dungeon) {
         this.player = player;
         this.dungeon = dungeon;
         this.currentRoomIndex = 0;
         this.gameOver = false;
+        this.victory = false;
     }
 
     public void nextRoom() {
         currentRoomIndex++;
+
+        if (player.getHp() <= 0) {
+            gameOver = true;
+            victory = false;
+            return;
+        }
+
         if (currentRoomIndex >= dungeon.size()) {
             gameOver = true;
+            victory = true;
         }
     }
 
@@ -61,8 +71,16 @@ public class GameState {
         return gameOver;
     }
 
+    public boolean isVictory() {
+        return victory;
+    }
+
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public void setVictory(boolean victory) {
+        this.victory = victory;
     }
 
     public SaveData toSaveData() {

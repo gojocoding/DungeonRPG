@@ -37,6 +37,10 @@ public class GameEngine {
         return gameState.isGameOver();
     }
 
+    public boolean isVictory() {
+        return gameState.isVictory();
+    }
+
     public GameState getGameState() {
         return gameState;
     }
@@ -50,4 +54,5 @@ public class GameEngine {
         SaveData data = saveRepository.load(playerName);
         this.gameState = GameState.fromSaveData(data);
     }
+
 }
