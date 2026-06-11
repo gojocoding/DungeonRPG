@@ -33,6 +33,22 @@ public class GameEngine {
         return result;
     }
 
+    public RoomResult nextTurn() {
+
+        if (gameState.isGameOver()) {
+            return new RoomResult("Game Over", true);
+        }
+
+        Room room = gameState.getCurrentRoom();
+        Player player = gameState.getPlayer();
+
+        RoomResult result = room.enter(player);
+
+        gameState.nextRoom();
+
+        return result;
+    }
+
     public boolean isGameOver() {
         return gameState.isGameOver();
     }
