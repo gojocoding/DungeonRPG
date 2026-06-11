@@ -16,6 +16,10 @@ import javafx.stage.Stage;
 public class GameView extends Application {
 
     private GameEngine engine;
+    private Button nextRoomBtn;
+    private Button saveBtn;
+    private Button loadBtn;
+    private Button restartBtn;
 
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
@@ -23,19 +27,23 @@ public class GameView extends Application {
 
     @Override
     public void start(Stage stage) {
-
         GameState state = TestGameFactory.createTestGame();
         engine = new GameEngine(state);
-        Button restartBtn = new Button("New Game");
+
+        restartBtn = new Button("New Game");
+        nextRoomBtn = new Button("Next Room");
+        saveBtn = new Button("Save");
+        loadBtn = new Button("Load");
+
         restartBtn.setOnAction(e -> {
             GameState newState = TestGameFactory.createTestGame();
             engine = new GameEngine(newState);
+            engine.setGameStarted(true);
+            resultInfo.setText("New Game Started!");
+
             resultInfo.setText("");
             updateUI();
         });
-        Button nextRoomBtn = new Button("Next Room");
-        Button saveBtn = new Button("Save");
-        Button loadBtn = new Button("Load");
 
         nextRoomBtn.setOnAction(e -> playTurn());
 
@@ -43,6 +51,9 @@ public class GameView extends Application {
 
         loadBtn.setOnAction(e -> {
             engine.loadGame("Test");
+
+            engine.setGameStarted(true);
+
             updateUI();
         });
 
@@ -61,7 +72,6 @@ public class GameView extends Application {
         stage.setScene(new Scene(root, 400, 300));
         stage.setTitle("RPG Dungeon Crawler");
         stage.show();
-
     }
 
     private void playTurn() {
@@ -74,10 +84,20 @@ public class GameView extends Application {
             return;
         }
 
-        RoomResult result = engine.playNextRoom();
+        RoomResult result = engine.nextTurn();
 
-        updateUI();
         resultInfo.setText(result.getMessage());
+        updateUI();
+    }
+    private void updateButtons() {
+        boolean finished = engine.isGameOver();
+        boolean started = engine.isGameStarted();
+
+        nextRoomBtn.setDisable(!started || finished);
+        saveBtn.setDisable(!started || finished);
+
+        loadBtn.setDisable(false);
+        restartBtn.setDisable(false);
     }
 
     private void updateUI() {
@@ -90,8 +110,16 @@ public class GameView extends Application {
                         " LV: " + player.getLevel()
         );
 
-        roomInfo.setText(
-                "Room: " + state.getCurrentRoomIndex()
-        );
+        roomInfo.setText("Room: " + state.getCurrentRoomIndex());
+
+        if (engine.isGameOver()) {
+            if (engine.isVictory()) {
+                resultInfo.setText("🏆 YOU WIN!");
+            } else {
+                resultInfo.setText("☠ GAME OVER");
+            }
+        }
+
+        updateButtons();
     }
 }
