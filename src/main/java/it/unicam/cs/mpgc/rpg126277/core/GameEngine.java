@@ -4,6 +4,9 @@ import it.unicam.cs.mpgc.rpg126277.model.GameState;
 import it.unicam.cs.mpgc.rpg126277.model.Player;
 import it.unicam.cs.mpgc.rpg126277.world.Room;
 import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
+import it.unicam.cs.mpgc.rpg126277.persistence.SaveData;
+import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
+import it.unicam.cs.mpgc.rpg126277.persistence.SaveRepository;
 
 public class GameEngine {
 
@@ -36,5 +39,15 @@ public class GameEngine {
 
     public GameState getGameState() {
         return gameState;
+    }
+    private SaveRepository saveRepository = new JsonSaveRepository();
+
+    public void saveGame() {
+        saveRepository.save(gameState.toSaveData());
+    }
+
+    public void loadGame(String playerName) {
+        SaveData data = saveRepository.load(playerName);
+        this.gameState = GameState.fromSaveData(data);
     }
 }

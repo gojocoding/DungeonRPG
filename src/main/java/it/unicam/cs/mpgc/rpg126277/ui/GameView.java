@@ -28,10 +28,26 @@ public class GameView extends Application {
         engine = new GameEngine(state);
 
         Button nextRoomBtn = new Button("Next Room");
+        Button saveBtn = new Button("Save");
+        Button loadBtn = new Button("Load");
 
         nextRoomBtn.setOnAction(e -> playTurn());
 
-        VBox root = new VBox(10, playerInfo, roomInfo, resultInfo, nextRoomBtn);
+        saveBtn.setOnAction(e -> engine.saveGame());
+
+        loadBtn.setOnAction(e -> {
+            engine.loadGame("Test");
+            updateUI();
+        });
+
+        VBox root = new VBox(10,
+                playerInfo,
+                roomInfo,
+                resultInfo,
+                nextRoomBtn,
+                saveBtn,
+                loadBtn
+        );
 
         updateUI();
 
@@ -50,7 +66,6 @@ public class GameView extends Application {
         RoomResult result = engine.playNextRoom();
 
         updateUI();
-
         resultInfo.setText(result.getMessage());
     }
 
@@ -68,4 +83,5 @@ public class GameView extends Application {
                 "Room: " + state.getCurrentRoomIndex()
         );
     }
+
 }

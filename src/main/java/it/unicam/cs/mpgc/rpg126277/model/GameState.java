@@ -1,8 +1,12 @@
 package it.unicam.cs.mpgc.rpg126277.model;
 
 import it.unicam.cs.mpgc.rpg126277.world.Room;
+import it.unicam.cs.mpgc.rpg126277.world.RoomFactory;
+import it.unicam.cs.mpgc.rpg126277.persistence.SaveData;
+import it.unicam.cs.mpgc.rpg126277.world.RoomType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameState {
 
@@ -59,5 +63,26 @@ public class GameState {
 
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public SaveData toSaveData() {
+        List<RoomType> types = dungeon.stream()
+                .map(Room::getType)
+                .collect(Collectors.toList());
+
+        return new SaveData(player, currentRoomIndex, gameOver, types);
+    }
+
+    public static GameState fromSaveData(SaveData data) {
+
+        List<Room> dungeon = data.getDungeon().stream()
+                .map(RoomFactory::create)
+                .collect(Collectors.toList());
+
+        GameState state = new GameState(data.getPlayer(), dungeon);
+        state.setCurrentRoomIndex(data.getCurrentRoomIndex());
+        state.setGameOver(data.isGameOver());
+
+        return state;
     }
 }
