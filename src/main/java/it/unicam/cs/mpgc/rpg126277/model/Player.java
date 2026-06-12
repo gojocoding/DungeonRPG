@@ -29,6 +29,22 @@ public class Player {
 
         this.hp = this.maxHp;
     }
+    public void addXp(int amount) {
+        this.xp += amount;
+
+        if (this.xp >= 100) {
+            levelUp();
+        }
+    }
+
+    private void levelUp() {
+        level++;
+        xp = 0;
+
+        maxHp += 10;
+        attack += 2;
+        hp = maxHp;
+    }
 
     public String getName() {
         return name;

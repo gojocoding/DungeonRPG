@@ -36,7 +36,7 @@ public class GameEngine {
         if (!player.isAlive()) {
             gameState.setGameOver(true);
             gameState.setVictory(false);
-            return result;
+            return new RoomResult("Sei stato sconfitto...", true);
         }
 
         if (gameState.getCurrentRoomIndex() >= gameState.getDungeon().size()) {

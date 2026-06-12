@@ -21,7 +21,7 @@ public class CombatRoom implements Room {
             enemyHp -= player.getAttack();
 
             if (enemyHp <= 0) {
-                player.setXp(player.getXp() + 50);
+                player.addXp(50);
                 return new RoomResult("Hai vinto il combattimento!", false);
             }
 

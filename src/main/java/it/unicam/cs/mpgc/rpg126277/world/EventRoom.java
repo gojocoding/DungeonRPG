@@ -28,7 +28,7 @@ public class EventRoom implements Room {
             }
 
             default -> {
-                player.setXp(player.getXp() + 30);
+                player.addXp(30);
                 return new RoomResult("Antico tomo: +30 XP", false);
             }
         }

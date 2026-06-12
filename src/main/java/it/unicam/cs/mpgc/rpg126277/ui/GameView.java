@@ -123,7 +123,7 @@ public class GameView extends Application {
                         " LV: " + player.getLevel()
         );
 
-        roomInfo.setText("Room: " + state.getCurrentRoomIndex());
+        roomInfo.setText("Room: " + (state.getCurrentRoomIndex() + 1));
 
         if (engine.isGameOver()) {
             resultInfo.setText(engine.isVictory() ? "🏆 YOU WIN!" : "☠ GAME OVER");
