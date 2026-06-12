@@ -1,1 +1,0 @@
-{"player":{"name":"Test","characterClass":"WARRIOR","level":1,"xp":50,"hp":90,"maxHp":120,"attack":15},"currentRoomIndex":3,"gameOver":false,"victory":false,"dungeon":["TREASURE","EVENT","COMBAT","EVENT","BOSS"]}
