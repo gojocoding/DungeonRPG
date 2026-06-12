@@ -45,7 +45,6 @@ public class GameView extends Application {
             engine = new GameEngine(newState);
 
             uiState = UiState.PLAYING;
-
             resultInfo.setText("New Game Started!");
             updateUI();
         });
@@ -58,7 +57,7 @@ public class GameView extends Application {
             engine.loadGame("Test");
 
             uiState = UiState.PLAYING;
-
+            resultInfo.setText("Game Loaded!");
             updateUI();
         });
 
@@ -80,33 +79,38 @@ public class GameView extends Application {
     }
 
     private void playTurn() {
-        if (engine.isGameOver()) {
-            resultInfo.setText(engine.isVictory() ? "YOU WIN!" : "GAME OVER");
-            return;
-        }
-
         RoomResult result = engine.nextTurn();
 
         resultInfo.setText(result.getMessage());
+
+        if (engine.isGameOver()) {
+            uiState = UiState.GAME_OVER;
+        } else {
+            uiState = UiState.PLAYING;
+        }
+
         updateUI();
     }
     private void updateButtons() {
 
-        boolean finished = engine.isGameOver();
+        switch (uiState) {
 
-        if (uiState == UiState.MENU) {
+            case MENU -> {
+                nextRoomBtn.setDisable(true);
+                saveBtn.setDisable(true);
+            }
 
-            nextRoomBtn.setDisable(true);
-            saveBtn.setDisable(true);
+            case PLAYING -> {
+                boolean finished = engine.isGameOver();
+                nextRoomBtn.setDisable(finished);
+                saveBtn.setDisable(finished);
+            }
 
-            loadBtn.setDisable(false);
-            restartBtn.setDisable(false);
-
-            return;
+            case GAME_OVER -> {
+                nextRoomBtn.setDisable(true);
+                saveBtn.setDisable(true);
+            }
         }
-
-        nextRoomBtn.setDisable(finished);
-        saveBtn.setDisable(finished);
 
         loadBtn.setDisable(false);
         restartBtn.setDisable(false);
@@ -127,12 +131,14 @@ public class GameView extends Application {
 
         if (engine.isGameOver()) {
             resultInfo.setText(engine.isVictory() ? "🏆 YOU WIN!" : "☠ GAME OVER");
+            uiState = UiState.GAME_OVER;
         }
 
         updateButtons();
     }
     private enum UiState {
         MENU,
-        PLAYING
+        PLAYING,
+        GAME_OVER
     }
 }
