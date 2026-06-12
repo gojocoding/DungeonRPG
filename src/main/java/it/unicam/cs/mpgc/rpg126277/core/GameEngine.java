@@ -59,13 +59,7 @@ public class GameEngine {
     public GameState getGameState() {
         return gameState;
     }
-    public boolean isGameStarted() {
-        return gameStarted;
-    }
 
-    public void setGameStarted(boolean gameStarted) {
-        this.gameStarted = gameStarted;
-    }
     private SaveRepository saveRepository = new JsonSaveRepository();
 
     public void saveGame() {

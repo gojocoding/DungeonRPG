@@ -9,15 +9,17 @@ public class SaveData {
         private Player player;
         private int currentRoomIndex;
         private boolean gameOver;
+        private boolean victory;
         private List<RoomType> dungeon;
 
         public SaveData() {
         }
 
-        public SaveData(Player player, int currentRoomIndex, boolean gameOver, List<RoomType> dungeon) {
+        public SaveData(Player player, int currentRoomIndex, boolean gameOver, boolean victory, List<RoomType> dungeon) {
             this.player = player;
             this.currentRoomIndex = currentRoomIndex;
             this.gameOver = gameOver;
+            this.victory = victory;
             this.dungeon = dungeon;
         }
 
@@ -33,8 +35,9 @@ public class SaveData {
             return gameOver;
         }
 
+        public boolean isVictory() { return victory; }
+
         public List<RoomType> getDungeon() {
             return dungeon;
         }
     }
-

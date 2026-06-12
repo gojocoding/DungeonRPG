@@ -25,11 +25,18 @@ public class GameState {
     }
 
     public void nextRoom() {
+        currentRoomIndex++;
+
+        if (player.getHp() <= 0) {
+            gameOver = true;
+            victory = false;
             return;
         }
 
-        currentRoomIndex++;
-
+        if (currentRoomIndex >= dungeon.size()) {
+            gameOver = true;
+            victory = true;
+        }
     }
 
     public Room getCurrentRoom() {
@@ -81,7 +88,7 @@ public class GameState {
                 .map(Room::getType)
                 .collect(Collectors.toList());
 
-        return new SaveData(player, currentRoomIndex, gameOver, types);
+        return new SaveData(player, currentRoomIndex, gameOver, victory, types);
     }
 
     public static GameState fromSaveData(SaveData data) {

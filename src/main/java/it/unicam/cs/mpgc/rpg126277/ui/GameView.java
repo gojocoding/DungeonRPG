@@ -38,8 +38,6 @@ public class GameView extends Application {
         restartBtn.setOnAction(e -> {
             GameState newState = TestGameFactory.createTestGame();
             engine = new GameEngine(newState);
-            engine.setGameStarted(true);
-            resultInfo.setText("New Game Started!");
 
             resultInfo.setText("");
             updateUI();
@@ -51,9 +49,6 @@ public class GameView extends Application {
 
         loadBtn.setOnAction(e -> {
             engine.loadGame("Test");
-
-            engine.setGameStarted(true);
-
             updateUI();
         });
 
@@ -91,10 +86,9 @@ public class GameView extends Application {
     }
     private void updateButtons() {
         boolean finished = engine.isGameOver();
-        boolean started = engine.isGameStarted();
 
-        nextRoomBtn.setDisable(!started || finished);
-        saveBtn.setDisable(!started || finished);
+        nextRoomBtn.setDisable(finished);
+        saveBtn.setDisable(finished);
 
         loadBtn.setDisable(false);
         restartBtn.setDisable(false);
