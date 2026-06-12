@@ -38,6 +38,7 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+saves/
 
 ### Eclipse ###
 .apt_generated
