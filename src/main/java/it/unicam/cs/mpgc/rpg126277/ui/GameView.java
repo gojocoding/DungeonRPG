@@ -5,6 +5,7 @@ package it.unicam.cs.mpgc.rpg126277.ui;
 import it.unicam.cs.mpgc.rpg126277.core.GameEngine;
 import it.unicam.cs.mpgc.rpg126277.model.GameState;
 import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
+import it.unicam.cs.mpgc.rpg126277.world.Room;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -127,7 +128,12 @@ public class GameView extends Application {
                         " LV: " + player.getLevel()
         );
 
-        roomInfo.setText("Room: " + (state.getCurrentRoomIndex() + 1));
+        if (uiState == UiState.PLAYING || uiState == UiState.GAME_OVER) {
+            Room current = state.getCurrentRoom();
+            roomInfo.setText("Room: " + current.getType());
+        } else {
+            roomInfo.setText("Room: -");
+        }
 
         if (engine.isGameOver()) {
             resultInfo.setText(engine.isVictory() ? "🏆 YOU WIN!" : "☠ GAME OVER");
