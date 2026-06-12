@@ -30,9 +30,10 @@ public class Player {
         this.hp = this.maxHp;
     }
     public void addXp(int amount) {
-        this.xp += amount;
+        this.xp += xp;
 
-        if (this.xp >= 100) {
+        while (this.xp >= 100) {
+            this.xp -= 100;
             levelUp();
         }
     }

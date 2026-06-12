@@ -28,17 +28,24 @@ public class GameEngine {
 
         Player player = gameState.getPlayer();
         Room room = gameState.getCurrentRoom();
+
         RoomResult result = room.enter(player);
+
+        if (!player.isAlive()) {
+            gameState.setGameOver(true);
+            gameState.setVictory(false);
+            return new RoomResult("💀 Sei stato sconfitto...", true);
+        }
+
+        if (gameState.getCurrentRoomIndex() == gameState.getDungeon().size() - 1) {
+            gameState.setGameOver(true);
+            gameState.setVictory(true);
+            return new RoomResult("🏆 Hai sconfitto il boss!", false);
+        }
 
         gameState.nextRoom();
 
-
-        if (!player.isAlive()) {
-            return new RoomResult("Sei stato sconfitto...", true);
-        }
-
         return result;
-
     }
 
     public boolean isGameOver() {
