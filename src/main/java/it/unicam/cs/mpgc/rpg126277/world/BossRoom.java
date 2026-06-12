@@ -10,8 +10,8 @@ public class BossRoom implements Room {
     @Override
     public RoomResult enter(Player player) {
 
-        int bossHp = 120;
-        int bossAttack = 20;
+        int bossHp = 100 + player.getLevel() * 30;
+        int bossAttack = 15 + player.getLevel() * 5;
 
         while (player.isAlive() && bossHp > 0) {
 

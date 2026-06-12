@@ -12,10 +12,9 @@ public class CombatRoom implements Room {
     @Override
     public RoomResult enter(Player player) {
 
-        int enemyHp = 50;
-        int enemyAttack = 10;
+        int enemyHp = 30 + new Random().nextInt(40);
+        int enemyAttack = 5 + new Random().nextInt(10);
 
-        Random rand = new Random();
 
         while (player.isAlive() && enemyHp > 0) {
 
