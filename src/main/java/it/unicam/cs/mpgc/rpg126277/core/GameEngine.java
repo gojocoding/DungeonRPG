@@ -11,7 +11,6 @@ import it.unicam.cs.mpgc.rpg126277.persistence.SaveRepository;
 public class GameEngine {
 
     private GameState gameState;
-    private boolean gameStarted = false;
 
     public GameEngine(GameState gameState) {
         this.gameState = gameState;
