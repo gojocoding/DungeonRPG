@@ -20,6 +20,7 @@ public class GameView extends Application {
     private Button saveBtn;
     private Button loadBtn;
     private Button restartBtn;
+    private UiState uiState = UiState.MENU;
 
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
@@ -30,16 +31,22 @@ public class GameView extends Application {
         GameState state = TestGameFactory.createTestGame();
         engine = new GameEngine(state);
 
+
         restartBtn = new Button("New Game");
         nextRoomBtn = new Button("Next Room");
         saveBtn = new Button("Save");
         loadBtn = new Button("Load");
 
+        uiState = UiState.MENU;
+        updateButtons();
+
         restartBtn.setOnAction(e -> {
             GameState newState = TestGameFactory.createTestGame();
             engine = new GameEngine(newState);
 
-            resultInfo.setText("");
+            uiState = UiState.PLAYING;
+
+            resultInfo.setText("New Game Started!");
             updateUI();
         });
 
@@ -49,6 +56,9 @@ public class GameView extends Application {
 
         loadBtn.setOnAction(e -> {
             engine.loadGame("Test");
+
+            uiState = UiState.PLAYING;
+
             updateUI();
         });
 
@@ -71,11 +81,7 @@ public class GameView extends Application {
 
     private void playTurn() {
         if (engine.isGameOver()) {
-            if (engine.isVictory()) {
-                resultInfo.setText("YOU WIN!");
-            } else {
-                resultInfo.setText("GAME OVER");
-            }
+            resultInfo.setText(engine.isVictory() ? "YOU WIN!" : "GAME OVER");
             return;
         }
 
@@ -85,7 +91,19 @@ public class GameView extends Application {
         updateUI();
     }
     private void updateButtons() {
+
         boolean finished = engine.isGameOver();
+
+        if (uiState == UiState.MENU) {
+
+            nextRoomBtn.setDisable(true);
+            saveBtn.setDisable(true);
+
+            loadBtn.setDisable(false);
+            restartBtn.setDisable(false);
+
+            return;
+        }
 
         nextRoomBtn.setDisable(finished);
         saveBtn.setDisable(finished);
@@ -95,6 +113,7 @@ public class GameView extends Application {
     }
 
     private void updateUI() {
+
         var state = engine.getGameState();
         var player = state.getPlayer();
 
@@ -107,13 +126,13 @@ public class GameView extends Application {
         roomInfo.setText("Room: " + state.getCurrentRoomIndex());
 
         if (engine.isGameOver()) {
-            if (engine.isVictory()) {
-                resultInfo.setText("🏆 YOU WIN!");
-            } else {
-                resultInfo.setText("☠ GAME OVER");
-            }
+            resultInfo.setText(engine.isVictory() ? "🏆 YOU WIN!" : "☠ GAME OVER");
         }
 
         updateButtons();
+    }
+    private enum UiState {
+        MENU,
+        PLAYING
     }
 }
