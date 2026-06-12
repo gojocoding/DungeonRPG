@@ -14,6 +14,7 @@ public class GameEngine {
 
     public GameEngine(GameState gameState) {
         this.gameState = gameState;
+        this.saveRepository = new JsonSaveRepository();
     }
 
     public RoomResult playNextRoom() {
@@ -25,19 +26,18 @@ public class GameEngine {
             return new RoomResult("Game Over", true);
         }
 
-        Room room = gameState.getCurrentRoom();
         Player player = gameState.getPlayer();
-
+        Room room = gameState.getCurrentRoom();
         RoomResult result = room.enter(player);
+
+        gameState.nextRoom();
+
 
         if (!player.isAlive()) {
             gameState.setGameOver(true);
             gameState.setVictory(false);
             return result;
         }
-
-        gameState.nextRoom();
-
 
         if (gameState.getCurrentRoomIndex() >= gameState.getDungeon().size()) {
             gameState.setGameOver(true);
@@ -60,7 +60,7 @@ public class GameEngine {
         return gameState;
     }
 
-    private SaveRepository saveRepository = new JsonSaveRepository();
+    private final SaveRepository saveRepository;
 
     public void saveGame() {
         saveRepository.save(gameState.toSaveData());

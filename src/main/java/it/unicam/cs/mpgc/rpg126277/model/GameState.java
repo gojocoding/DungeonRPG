@@ -26,17 +26,6 @@ public class GameState {
 
     public void nextRoom() {
         currentRoomIndex++;
-
-        if (player.getHp() <= 0) {
-            gameOver = true;
-            victory = false;
-            return;
-        }
-
-        if (currentRoomIndex >= dungeon.size()) {
-            gameOver = true;
-            victory = true;
-        }
     }
 
     public Room getCurrentRoom() {
