@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GameState {
-
     private Player player;
     private int currentRoomIndex;
     private List<Room> dungeon;

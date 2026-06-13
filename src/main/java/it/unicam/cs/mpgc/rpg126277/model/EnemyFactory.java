@@ -4,11 +4,8 @@ import java.util.Random;
 
 public class EnemyFactory {
     public static Enemy randomEnemy() {
-
         Random r = new Random();
-
         if (r.nextBoolean()) {
-
             return new Enemy(
                     "Goblin",
                     40,
@@ -17,9 +14,16 @@ public class EnemyFactory {
         }
 
         return new Enemy(
-                "Orc",
+                "Orco",
                 70,
                 12
          );
+    }
+    public static Enemy boss(Player p) {
+        return new Enemy(
+                "Boss",
+                90 ,
+                15
+        );
     }
 }

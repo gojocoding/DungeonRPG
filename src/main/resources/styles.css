@@ -21,7 +21,6 @@
     -fx-cursor: hand;
 }
 
-/* BOTTONI GENERICI RPG */
 .rpg-button {
     -fx-background-color: #111;
     -fx-text-fill: #ddd;
@@ -31,13 +30,11 @@
     -fx-padding: 10 20;
 }
 
-
 .rpg-button:hover {
     -fx-background-color: #222;
     -fx-border-color: gold;
 }
 
-/* STATS */
 .stats-label {
     -fx-text-fill: #7db9ff;
     -fx-font-size: 18px;
@@ -46,7 +43,6 @@
     -fx-effect: dropshadow(gaussian, black, 2, 0.3, 0, 0);
 }
 
-/* TITOLI */
 .title-label {
     -fx-text-fill: #ffffff;
     -fx-font-size: 24px;
@@ -54,7 +50,6 @@
     -fx-font-weight: bold;
 }
 
-/* TEXT FIELD + COMBO */
 .text-field, .combo-box {
     -fx-background-color: #1b1b1b;
     -fx-text-fill: #d0d0d0;
@@ -62,7 +57,6 @@
     -fx-border-radius: 5;
 }
 
-/* HP BAR */
 .progress-bar {
     -fx-background-color: #222;
 }
@@ -71,17 +65,14 @@
     -fx-background-color: linear-gradient(to right, #ff0000, #cc0000);
 }
 
-/* CLASS CARDS */
 .class-card {
     -fx-background-color: #1b1b1b;
     -fx-text-fill: #ddd;
     -fx-font-size: 14px;
     -fx-font-family: "Consolas";
-
     -fx-padding: 20;
     -fx-pref-width: 140;
     -fx-pref-height: 120;
-
     -fx-border-color: #444;
     -fx-border-radius: 8;
 }
@@ -90,14 +81,22 @@
     -fx-background-color: #2a2a2a;
 }
 
-/* DISABLED BUTTON */
 .button:disabled {
     -fx-opacity: 0.4;
 }
 
-/* CREATION LABEL */
 .creation-title {
     -fx-text-fill: #cfcfcf;
     -fx-font-size: 26px;
     -fx-font-family: "Georgia";
+}
+
+.attack-button {
+    -fx-background-color: #b30000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.attack-button:hover {
+    -fx-background-color: #ff1a1a;
 }

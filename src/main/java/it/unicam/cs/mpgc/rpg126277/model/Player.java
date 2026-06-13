@@ -10,9 +10,6 @@ public class Player {
     private int maxHp;
     private int attack;
 
-    public Player() {
-    }
-
     public Player(String name, CharacterClass characterClass) {
         this.name = name;
         this.characterClass = characterClass;
@@ -20,30 +17,28 @@ public class Player {
         this.xp = 0;
 
         if (characterClass == CharacterClass.WARRIOR) {
-            this.maxHp = 120;
+            this.maxHp = 1200;
             this.attack = 15;
-        } else {
+        }
+        else {
             this.maxHp = 80;
             this.attack = 10;
         }
-
         this.hp = this.maxHp;
     }
+
     public void addXp(int amount) {
         xp += amount;
-
-        while (xp >= 100) {
-            xp -= 100;
+        while (xp >= 150) {
+            xp -= 150;
             levelUp();
         }
     }
 
     private void levelUp() {
         level++;
-
         maxHp += 20;
         attack += 3;
-
         hp = maxHp;
     }
 

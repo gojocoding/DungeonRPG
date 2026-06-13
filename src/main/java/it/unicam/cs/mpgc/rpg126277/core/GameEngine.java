@@ -21,72 +21,87 @@ public class GameEngine {
     }
 
     public RoomResult nextTurn() {
-        Player player = gameState.getPlayer();
+        if (isFinished()) {
+            return new RoomResult("Game over", RoomOutcome.GAME_OVER);
+        }
+
+        if (inCombat) {
+            return new RoomResult("Combattimento in corso", RoomOutcome.COMBAT_CONTINUE);
+        }
+
         Room room = gameState.getCurrentRoom();
 
-        if (isFinished()) {
-            return new RoomResult(
-                    "The dungeon has already ended...",
-                    RoomOutcome.GAME_OVER
-            );
+        if (room == null) {
+            return new RoomResult("Dungeon finito", RoomOutcome.GAME_OVER);
         }
 
-        // se sei in combat NON avanzare stanza
-        if (inCombat) {
-            return new RoomResult(
-                    "Fight in progress!",
-                    RoomOutcome.COMBAT_CONTINUE
-            );
-        }
-
-        // entra in una stanza
-        if (room instanceof CombatRoom) {
+        if (room.getType() == RoomType.COMBAT) {
 
             currentEnemy = EnemyFactory.randomEnemy();
             inCombat = true;
 
             return new RoomResult(
-                    "A wild " + currentEnemy.getName() + " appears!",
+                    "Appare un " + currentEnemy.getName(),
                     RoomOutcome.COMBAT_START
             );
         }
 
-        RoomResult result = room.enter(player);
+        if (room.getType() == RoomType.BOSS) {
 
-        if (result.getOutcome() == RoomOutcome.NEXT_ROOM) {
+            currentEnemy = EnemyFactory.boss(gameState.getPlayer());
+            inCombat = true;
+
+            return new RoomResult(
+                    "IL BOSS APPARE!",
+                    RoomOutcome.COMBAT_START
+            );
+        }
+        RoomResult result = room.enter(gameState.getPlayer());
+        if (result.isNextRoom()) {
             gameState.nextRoom();
         }
-
         return result;
     }
+
     public RoomResult attack() {
         if (!inCombat || currentEnemy == null) {
-            return new RoomResult("No enemy here", RoomOutcome.NONE);
+            return new RoomResult("Non c'è nessun nemico", RoomOutcome.NONE);
         }
-
         Player player = gameState.getPlayer();
-
         currentEnemy.takeDamage(player.getAttack());
 
         if (currentEnemy.isDead()) {
+
+            boolean isBoss = gameState.getCurrentRoom() instanceof BossRoom;
+
             inCombat = false;
             currentEnemy = null;
+
             gameState.nextRoom();
 
-            return new RoomResult("Enemy defeated!", RoomOutcome.NEXT_ROOM);
+            String message;
+
+            if(isBoss){
+                message = "Boss sconfitto!";
+            }
+            else{
+                message = "Nemico sconfitto!";
+            }
+
+            return new RoomResult(message, RoomOutcome.NEXT_ROOM);
         }
 
-        player.takeDamage(currentEnemy.getAttack());
+            player.takeDamage(currentEnemy.getAttack());
 
-        if (!player.isAlive()) {
-            inCombat = false;
-            currentEnemy = null;
+            if (!player.isAlive()) {
+                inCombat = false;
+                currentEnemy = null;
 
-            return new RoomResult("You died!", RoomOutcome.GAME_OVER);
+                return new RoomResult("Sei morto!", RoomOutcome.GAME_OVER);
+            }
+
+            return new RoomResult("Hai colpito il nemico!", RoomOutcome.COMBAT_CONTINUE);
         }
-
-        return new RoomResult("You hit the enemy!", RoomOutcome.COMBAT_CONTINUE);
-    }
 
     public boolean isInCombat() {
         return inCombat;
@@ -109,9 +124,7 @@ public class GameEngine {
     }
 
     public void saveGame() {
-
         Player p = gameState.getPlayer();
-
         SaveData data = new SaveData(
                 p.getName(),
                 p.getCharacterClass(),
@@ -126,16 +139,12 @@ public class GameEngine {
                         .map(Room::getType)
                         .toList()
         );
-
         saveRepository.save(data);
     }
 
     public void loadGame(String playerName) {
-
         SaveData data = saveRepository.load(playerName);
-
         if (data == null) return;
-
         Player player = new Player(
                 data.getPlayerName(),
                 data.getCharacterClass()

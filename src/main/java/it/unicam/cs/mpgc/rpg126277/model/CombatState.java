@@ -15,43 +15,32 @@ public class CombatState {
     }
 
     public RoomResult playerAttack() {
-
         if (!playerTurn) {
-            return new RoomResult("Not your turn!", RoomOutcome.STAY);
+            return new RoomResult("E' il tuo turno!", RoomOutcome.STAY);
         }
-
         enemy.takeDamage(player.getAttack());
-
         if (!enemy.isAlive()) {
-            return new RoomResult("Enemy defeated!", RoomOutcome.NEXT_ROOM);
+            return new RoomResult("Nemico sconfitto!!!", RoomOutcome.NEXT_ROOM);
         }
 
         playerTurn = false;
 
-        return new RoomResult("You hit the enemy!", RoomOutcome.STAY);
+        return new RoomResult("Hai colpito il nemico!", RoomOutcome.STAY);
     }
-
     public RoomResult enemyTurn() {
-
         if (playerTurn) {
-            return new RoomResult("Wait your turn!", RoomOutcome.STAY);
+            return new RoomResult("Aspetta il tuo turno!", RoomOutcome.STAY);
         }
-
         player.takeDamage(enemy.getAttack());
-
         if (!player.isAlive()) {
-            return new RoomResult("You died!", RoomOutcome.GAME_OVER);
+            return new RoomResult("Sei Morto...", RoomOutcome.GAME_OVER);
         }
-
         playerTurn = true;
-
-        return new RoomResult("Enemy attacks!", RoomOutcome.STAY);
+        return new RoomResult("Il nemico attacca!", RoomOutcome.STAY);
     }
-
     public Enemy getEnemy() {
         return enemy;
     }
-
     public boolean isPlayerTurn() {
         return playerTurn;
     }

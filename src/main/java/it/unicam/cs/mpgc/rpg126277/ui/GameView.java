@@ -9,6 +9,7 @@ import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
 import it.unicam.cs.mpgc.rpg126277.world.DungeonGenerator;
 import it.unicam.cs.mpgc.rpg126277.world.Room;
 import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -18,14 +19,20 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class GameView extends Application {
-
     private GameEngine engine;
     private Scene scene;
+    private CharacterClass selectedClass;
+    private String currentSaveName;
+    private boolean gameStarted = false;
+    private UiState uiState = UiState.MENU;
 
     private VBox menuRoot;
     private BorderPane gameRoot;
     private ProgressBar hpBar = new ProgressBar();
+    private VBox characterCreationRoot;
+    private TextField nameField;
 
+    private Button startGameBtn;
     private Button nextRoomBtn;
     private Button saveBtn;
     private Button loadBtn;
@@ -33,45 +40,33 @@ public class GameView extends Application {
     private Button attackBtn;
     private Button warriorCard;
     private Button mageCard;
-    private CharacterClass selectedClass;
-    private String currentSaveName;
 
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
     private Label resultInfo = new Label();
     private Label nameError = new Label();
-    private boolean gameStarted = false;
-
-    private UiState uiState = UiState.MENU;
-
-    private VBox characterCreationRoot;
-    private TextField nameField;
-    private Button startGameBtn;
 
     @Override
     public void start(Stage stage) {
-
         createMenu();
         createCharacterCreation();
         createGameUI();
 
-        scene = new Scene(menuRoot, 400, 300);
+        scene = new Scene(menuRoot, 500, 400);
 
         scene.getStylesheets().add(
                 getClass().getResource("/styles.css").toExternalForm()
         );
-
         stage.setScene(scene);
         stage.setTitle("DungeonRPG");
         stage.show();
     }
 
-    // ---------------- MENU ----------------
+    //Menù
 
     private void createMenu() {
-
-        Button newGameBtn = new Button("New Game");
-        Button loadBtnMenu = new Button("Load");
+        Button newGameBtn = new Button("Nuova Partita");
+        Button loadBtnMenu = new Button("Carica Salvataggio");
 
         newGameBtn.getStyleClass().add("menu-button");
         loadBtnMenu.getStyleClass().add("menu-button");
@@ -80,9 +75,8 @@ public class GameView extends Application {
         loadBtnMenu.setOnAction(e -> loadGame());
 
         menuRoot = new VBox(10, newGameBtn, loadBtnMenu);
-
         menuRoot.setStyle(
-                "-fx-background-image: url('/images/manuu.jfif');" +
+                "-fx-background-image: url('/images/menu.jfif');" +
                         "-fx-background-size: cover;" +
                         "-fx-background-position: center;" +
                         "-fx-alignment: center;" +
@@ -90,18 +84,16 @@ public class GameView extends Application {
         );
     }
 
-    // ---------------- CHARACTER CREATION ----------------
+    //Character creation
 
     private void createCharacterCreation() {
-
         nameField = new TextField();
         nameField.setTextFormatter(new TextFormatter<String>(change ->
                 change.getControlNewText().length() <= 15 ? change : null
         ));
         nameError.setStyle("-fx-text-fill: #ff4d4d;");
         nameError.setText("");
-
-        nameField.setPromptText("Enter your name");
+        nameField.setPromptText("Scegli il tuo nome");
         nameField.setPrefWidth(200);
         nameField.setMaxWidth(180);
         nameField.setStyle(
@@ -109,25 +101,23 @@ public class GameView extends Application {
                         "-fx-text-fill: white;" +
                         "-fx-prompt-text-fill: gray;"
         );
-
-        Label title = new Label("Create Character");
+        Label title = new Label("Crea Personaggio");
         title.getStyleClass().add("creation-title");
 
-        warriorCard = new Button("WARRIOR\nHP: 120\nATK: 15");
-        mageCard = new Button("MAGE\nHP: 80\nATK: 10");
+        warriorCard = new Button("Guerriero\nHP: 120\nATK: 15");
+        mageCard = new Button("Mago\nHP: 80\nATK: 10");
 
         warriorCard.getStyleClass().add("class-card");
         mageCard.getStyleClass().add("class-card");
-
         nameField.setText("");
-        selectedClass = CharacterClass.WARRIOR;
 
+        selectedClass = CharacterClass.WARRIOR;
         warriorCard.setOnAction(e -> selectClass(CharacterClass.WARRIOR));
         mageCard.setOnAction(e -> selectClass(CharacterClass.MAGE));
 
         updateClassSelectionUI();
 
-        startGameBtn = new Button("Start Adventure");
+        startGameBtn = new Button("Inizia la sfida");
         startGameBtn.getStyleClass().add("rpg-button");
         startGameBtn.setOnAction(e -> startNewGameWithCharacter());
 
@@ -155,10 +145,8 @@ public class GameView extends Application {
     }
 
     private void updateClassSelectionUI() {
-
         warriorCard.setStyle("");
         mageCard.setStyle("");
-
         if (selectedClass == CharacterClass.WARRIOR) {
             warriorCard.setStyle(
                     "-fx-background-color: #333;" +
@@ -166,7 +154,8 @@ public class GameView extends Application {
                             "-fx-border-color: gold;" +
                             "-fx-border-width: 2;"
             );
-        } else {
+        }
+        else {
             mageCard.setStyle(
                     "-fx-background-color: #333;" +
                             "-fx-text-fill: white;" +
@@ -176,19 +165,22 @@ public class GameView extends Application {
         }
     }
 
-    // ---------------- GAME UI ----------------
+    //Interfaccia di gioco
 
     private void createGameUI() {
+        nextRoomBtn = new Button("Prossima stanza");
+        saveBtn = new Button("Salva");
+        restartBtn = new Button("Torna al menù");
+        attackBtn = new Button("Attacca");
 
-        nextRoomBtn = new Button("Next Room");
-        saveBtn = new Button("Save");
-        restartBtn = new Button("Back to Menu");
-        attackBtn = new Button("Attack");
         attackBtn.setOnAction(e -> {
             RoomResult result = engine.attack();
             resultInfo.setText(result.getMessage());
             updateUI();
-        });
+              }
+        );
+        attackBtn.getStyleClass().add("rpg-button");
+        attackBtn.getStyleClass().add("attack-button");
         playerInfo.getStyleClass().add("stats-label");
         roomInfo.getStyleClass().add("stats-label");
         resultInfo.getStyleClass().add("stats-label");
@@ -201,7 +193,8 @@ public class GameView extends Application {
             RoomResult result = engine.nextTurn();
             resultInfo.setText(result.getMessage());
             updateUI();
-        });
+             }
+        );
         saveBtn.setOnAction(e -> engine.saveGame());
         restartBtn.setOnAction(e -> showMenu());
 
@@ -219,7 +212,6 @@ public class GameView extends Application {
 
         HBox bottomBar = new HBox(20);
         bottomBar.setAlignment(Pos.CENTER);
-
         bottomBar.getChildren().addAll(
                 nextRoomBtn,
                 attackBtn,
@@ -240,11 +232,8 @@ public class GameView extends Application {
                 "-fx-padding: 15;" +
                         "-fx-background-color: #0b0b0b;"
         );
-
         gameRoot = root;
     }
-
-    // ---------------- FLOW ----------------
 
     private void startNewGame() {
         GameState state = TestGameFactory.createTestGame();
@@ -254,28 +243,21 @@ public class GameView extends Application {
 
     private void startNewGameWithCharacter() {
         String name = nameField.getText();
-
         if (name == null || name.isBlank()) {
-            nameError.setText("You must enter a name first");
+            nameError.setText("Devi prima scegliere un nome");
             return;
         }
-
         currentSaveName = name;
-
         Player player = new Player(name, selectedClass);
-
         GameState state = new GameState(
                 player,
                 DungeonGenerator.generateDungeon(5)
         );
-
         engine = new GameEngine(
                 state,
                 new JsonSaveRepository()
         );
-
-        resultInfo.setText("A new adventure begins...");
-
+        resultInfo.setText("Inizia una nuova avventura!");
         showGame();
     }
 
@@ -300,12 +282,10 @@ public class GameView extends Application {
     private void showGame() {
         scene.setRoot(gameRoot);
         uiState = UiState.PLAYING;
-
         if (!gameStarted) {
-            resultInfo.setText("You enter the dungeon...");
+            resultInfo.setText("Sei entrato/a nel Dungeon");
             gameStarted = true;
         }
-
         updateUI();
     }
 
@@ -314,54 +294,48 @@ public class GameView extends Application {
         uiState = UiState.MENU;
     }
 
-    // ---------------- GAME LOGIC ----------------
-
     private void playTurn() {
-
         RoomResult result = engine.nextTurn();
         if (engine == null) return;
         resultInfo.setText(result.getMessage());
-
         if (engine.isFinished()) {
             uiState = UiState.GAME_OVER;
         }
-
         updateUI();
     }
 
     private void updateUI() {
-
         if (engine == null) return;
-
         var state = engine.getGameState();
         var player = state.getPlayer();
-
         playerInfo.setText(
                 "Player: " + player.getName() +
                         " HP: " + player.getHp() +
                         " LV: " + player.getLevel()
         );
-
         Room current = state.getCurrentRoom();
-        roomInfo.setText(current != null ? current.getType().toString() : "-");
+        if (current != null) {
+            roomInfo.setText(current.getType().toString());
+        } else {
+            roomInfo.setText("-");
+        }
 
         if (engine.isGameOver()) {
-            resultInfo.setText(engine.isVictory() ? "🏆 YOU WIN!" : "☠ GAME OVER");
+            if (engine.isVictory()) {
+                resultInfo.setText("Hai vinto!");
+            } else {
+                resultInfo.setText("Hai perso...");
+            }
             uiState = UiState.GAME_OVER;
         }
 
         double hpRatio = (double) player.getHp() / player.getMaxHp();
         hpBar.setProgress(hpRatio);
         boolean inCombat = engine.isInCombat();
-
         nextRoomBtn.setDisable(inCombat);
-
         attackBtn.setVisible(inCombat);
         attackBtn.setManaged(inCombat);
     }
-
-    // ---------------- STATE ----------------
-
     private enum UiState {
         MENU,
         PLAYING,
