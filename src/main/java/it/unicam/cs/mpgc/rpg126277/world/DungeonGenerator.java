@@ -10,12 +10,10 @@ public class DungeonGenerator {
 
         List<Room> dungeon = new ArrayList<>();
 
-        // stanze normali
         for (int i = 0; i < size; i++) {
             dungeon.add(randomRoom());
         }
 
-        // boss SEMPRE ultimo
         dungeon.add(new BossRoom());
 
         return dungeon;

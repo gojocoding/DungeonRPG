@@ -50,24 +50,4 @@ public class GameState {
     public void setDungeon(List<Room> dungeon) {
         this.dungeon = dungeon;
     }
-
-    public SaveData toSaveData() {
-        List<RoomType> types = dungeon.stream()
-                .map(Room::getType)
-                .toList();
-
-        return new SaveData(player, currentRoomIndex, types);
-    }
-
-    public static GameState fromSaveData(SaveData data) {
-
-        List<Room> dungeon = data.getDungeon().stream()
-                .map(RoomFactory::create)
-                .toList();
-
-        GameState state = new GameState(data.getPlayer(), dungeon);
-        state.setCurrentRoomIndex(data.getCurrentRoomIndex());
-
-        return state;
-    }
 }

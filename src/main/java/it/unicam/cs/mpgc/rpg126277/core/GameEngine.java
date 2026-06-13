@@ -3,10 +3,13 @@ package it.unicam.cs.mpgc.rpg126277.core;
 import it.unicam.cs.mpgc.rpg126277.model.GameState;
 import it.unicam.cs.mpgc.rpg126277.model.Player;
 import it.unicam.cs.mpgc.rpg126277.world.Room;
+import it.unicam.cs.mpgc.rpg126277.world.RoomFactory;
 import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
 import it.unicam.cs.mpgc.rpg126277.persistence.SaveData;
 import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
 import it.unicam.cs.mpgc.rpg126277.persistence.SaveRepository;
+
+import java.util.List;
 
 public class GameEngine {
 
@@ -55,7 +58,10 @@ public class GameEngine {
     }
 
     public void saveGame() {
-        saveRepository.save(gameState.toSaveData());
+        Player p = gameState.getPlayer();
+
+        SaveData data = new SaveData(p.getName(), p.getCharacterClass(), p.getLevel(), p.getXp(), p.getHp(), p.getMaxHp(), p.getAttack(), gameState.getCurrentRoomIndex(), gameState.getDungeon().stream().map(Room::getType).toList());
+        saveRepository.save(data);
     }
 
     public void loadGame(String playerName) {
@@ -63,6 +69,19 @@ public class GameEngine {
 
         if (data == null) return;
 
-        this.gameState = GameState.fromSaveData(data);
+        Player player = new Player(
+                data.getPlayerName(),
+                data.getCharacterClass()
+        );
+        player.setLevel(data.getLevel());
+        player.setXp(data.getXp());
+        player.setHp(data.getHp());
+        player.setMaxHp(data.getMaxHp());
+        player.setAttack(data.getAttack());
+
+        List<Room> dungeon = data.getDungeon().stream().map(RoomFactory::create).toList();
+
+        this.gameState = new GameState(player, dungeon);
+        this.gameState.setCurrentRoomIndex(data.getCurrentRoomIndex());
     }
 }

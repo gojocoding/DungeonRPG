@@ -12,7 +12,7 @@ public class JsonSaveRepository implements SaveRepository {
 
     @Override
     public void save(SaveData data) {
-        try (FileWriter writer = new FileWriter(PATH + data.getPlayer().getName() + ".json")) {
+        try (FileWriter writer = new FileWriter(PATH + data.getPlayerName() + ".json")) {
             gson.toJson(data, writer);
         } catch (IOException e) {
             e.printStackTrace();
