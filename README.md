@@ -50,3 +50,22 @@ livello ed esperienza
 HP e statistiche
 progressione nel dungeon
 
+🤖 Uso di strumenti di AI
+
+Durante lo sviluppo del progetto sono stati utilizzati strumenti di AI (ChatGPT) come supporto allo studio e alla progettazione.
+
+In particolare l’AI è stata utilizzata per:
+
+chiarire concetti di architettura software e principi SOLID
+ricevere suggerimenti sulla struttura del progetto
+supporto nella gestione di errori di compilazione e debug
+comprendere migliori pratiche per la separazione tra logica di gioco, UI e persistenza
+
+Il codice finale è stato comunque:
+
+analizzato e compreso
+modificato manualmente
+testato ed integrato autonomamente
+
+L’AI è stata utilizzata esclusivamente come strumento di supporto didattico.
+
