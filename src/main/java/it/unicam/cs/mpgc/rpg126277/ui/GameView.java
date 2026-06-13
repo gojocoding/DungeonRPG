@@ -1,27 +1,28 @@
 package it.unicam.cs.mpgc.rpg126277.ui;
 
 
-
 import it.unicam.cs.mpgc.rpg126277.core.GameEngine;
 import it.unicam.cs.mpgc.rpg126277.model.CharacterClass;
 import it.unicam.cs.mpgc.rpg126277.model.GameState;
 import it.unicam.cs.mpgc.rpg126277.model.Player;
-import it.unicam.cs.mpgc.rpg126277.world.DungeonGenerator;
-import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
-import it.unicam.cs.mpgc.rpg126277.world.Room;
 import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
-
+import it.unicam.cs.mpgc.rpg126277.world.DungeonGenerator;
+import it.unicam.cs.mpgc.rpg126277.world.Room;
+import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.scene.control.TextField;
 
 public class GameView extends Application {
 
     private GameEngine engine;
-
     private Scene scene;
 
     private VBox menuRoot;
@@ -32,23 +33,20 @@ public class GameView extends Application {
     private Button saveBtn;
     private Button loadBtn;
     private Button restartBtn;
-    private String playerName;
 
     private Button warriorCard;
     private Button mageCard;
     private CharacterClass selectedClass;
 
-
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
     private Label resultInfo = new Label();
-    private Label nameError = new Label();
 
     private UiState uiState = UiState.MENU;
+
     private VBox characterCreationRoot;
     private TextField nameField;
     private Button startGameBtn;
-
 
     @Override
     public void start(Stage stage) {
@@ -87,25 +85,20 @@ public class GameView extends Application {
                 "-fx-background-image: url('/images/manuu.jfif');" +
                         "-fx-background-size: cover;" +
                         "-fx-background-position: center;" +
-
-                "-fx-alignment: center;" +
+                        "-fx-alignment: center;" +
                         "-fx-padding: 20;"
         );
     }
+
+    // ---------------- CHARACTER CREATION ----------------
+
     private void createCharacterCreation() {
+
         nameField = new TextField();
-        nameField.setMaxWidth(200);
-        nameField.setPrefWidth(200);
         nameField.setPromptText("Enter your name");
-        nameField.setTextFormatter(new TextFormatter<String>(change ->
-                change.getControlNewText().length() <= 15 ? change : null
-        ));
 
         Label title = new Label("Create Character");
         title.getStyleClass().add("creation-title");
-
-        nameError.setStyle("-fx-text-fill: #ff4d4d;");
-        nameError.setText("");
 
         warriorCard = new Button("WARRIOR\nHP: 120\nATK: 15");
         mageCard = new Button("MAGE\nHP: 80\nATK: 10");
@@ -131,7 +124,6 @@ public class GameView extends Application {
                 15,
                 title,
                 nameField,
-                nameError,
                 classBox,
                 startGameBtn
         );
@@ -172,6 +164,7 @@ public class GameView extends Application {
     // ---------------- GAME UI ----------------
 
     private void createGameUI() {
+
         nextRoomBtn = new Button("Next Room");
         saveBtn = new Button("Save");
         restartBtn = new Button("Back to Menu");
@@ -193,7 +186,6 @@ public class GameView extends Application {
                 "-fx-accent: linear-gradient(to right, #ff4d4d, #b30000);"
         );
 
-        // ---------------- INFO AREA (CENTRO) ----------------
         VBox infoBox = new VBox(5,
                 playerInfo,
                 hpBar,
@@ -201,7 +193,6 @@ public class GameView extends Application {
                 resultInfo
         );
 
-        // ---------------- BOTTOM BAR ----------------
         HBox bottomBar = new HBox(20);
         bottomBar.setAlignment(Pos.CENTER);
 
@@ -216,9 +207,7 @@ public class GameView extends Application {
                         "-fx-background-color: #1a1a1a;"
         );
 
-        // ---------------- ROOT LAYOUT (HUD STYLE) ----------------
         BorderPane root = new BorderPane();
-
         root.setCenter(infoBox);
         root.setBottom(bottomBar);
 
@@ -235,26 +224,21 @@ public class GameView extends Application {
     private void startNewGame() {
         GameState state = TestGameFactory.createTestGame();
         engine = new GameEngine(state, new JsonSaveRepository());
-
         showGame();
     }
+
     private void startNewGameWithCharacter() {
 
         String name = nameField.getText();
+
         if (name == null || name.isBlank()) {
-            nameError.setText("Name cannot be empty");
-            return;
-        }
-
-        nameError.setText("");
-        playerName = name;
-
-        if (selectedClass == null) {
-            selectedClass = CharacterClass.WARRIOR;
+            name = "Hero";
         }
 
         Player player = new Player(name, selectedClass);
-
+        if (selectedClass == null) {
+            selectedClass = CharacterClass.WARRIOR;
+        }
         GameState state = new GameState(
                 player,
                 DungeonGenerator.generateDungeon(5)
@@ -270,6 +254,8 @@ public class GameView extends Application {
 
     private void loadGame() {
 
+        String name = "Test";
+
         if (engine == null) {
             engine = new GameEngine(
                     TestGameFactory.createTestGame(),
@@ -277,13 +263,14 @@ public class GameView extends Application {
             );
         }
 
-        engine.loadGame(playerName);
+        engine.loadGame(name);
         showGame();
     }
+
     private void showCharacterCreation() {
-        nameField.clear();
         scene.setRoot(characterCreationRoot);
     }
+
     private void showGame() {
         scene.setRoot(gameRoot);
         uiState = UiState.PLAYING;
@@ -329,6 +316,7 @@ public class GameView extends Application {
             resultInfo.setText(engine.isVictory() ? "🏆 YOU WIN!" : "☠ GAME OVER");
             uiState = UiState.GAME_OVER;
         }
+
         double hpRatio = (double) player.getHp() / player.getMaxHp();
         hpBar.setProgress(hpRatio);
     }

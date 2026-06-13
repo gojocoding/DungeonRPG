@@ -22,25 +22,18 @@ public class GameEngine {
     }
 
     public RoomResult nextTurn() {
+        Player player = gameState.getPlayer();
+        Room room = gameState.getCurrentRoom();
 
         if (isFinished()) {
             return new RoomResult(
-                    "Game finished",
+                    "The dungeon has already ended...",
                     RoomOutcome.GAME_OVER
             );
         }
 
-        Player player = gameState.getPlayer();
-        Room room = gameState.getCurrentRoom();
-
         RoomResult result = room.enter(player);
 
-        // gestione morte
-        if (result.getOutcome() == RoomOutcome.GAME_OVER) {
-            return result;
-        }
-
-        // avanzamento stanza solo se richiesto
         if (result.getOutcome() == RoomOutcome.NEXT_ROOM) {
             gameState.nextRoom();
         }

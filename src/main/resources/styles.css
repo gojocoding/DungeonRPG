@@ -1,3 +1,7 @@
+.root {
+    -fx-font-family: "Consolas";
+}
+
 .menu-button {
     -fx-font-size: 18px;
     -fx-text-fill: white;
@@ -10,72 +14,14 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
+
 .menu-button:hover {
     -fx-background-color: linear-gradient(to bottom, #3a3a3a, #151515);
     -fx-border-color: gold;
     -fx-cursor: hand;
 }
-.rpg-button {
-    -fx-font-size: 14px;
-    -fx-text-fill: white;
 
-    -fx-background-color: #1a1a1a;
-    -fx-border-color: #666;
-
-    -fx-padding: 8 18 8 18;
-    -fx-background-radius: 6;
-}
-.stats-label {
-    -fx-font-size: 14px;
-    -fx-text-fill: #4da6ff;
-    -fx-font-family: "Consolas";
-}
-.progress-bar {
-    -fx-background-color: #222;
-}
-
-.progress-bar .bar {
-    -fx-background-color: linear-gradient(to right, #ff0000, #cc0000);
-}
-
-TextField, ComboBox {
-    -fx-background-color: #222;
-    -fx-text-fill: white;
-}
-.creation-title {
-    -fx-text-fill: #bdbdbd;
-    -fx-font-size: 22px;
-}
-
-.creation-label {
-    -fx-text-fill: #9a9a9a;
-    -fx-font-size: 14px;
-}
-
-.text-field {
-    -fx-background-color: #1b1b1b;
-    -fx-text-fill: #d0d0d0;
-
-    -fx-border-color: #444;
-    -fx-border-radius: 5;
-}
-
-.combo-box {
-    -fx-background-color: #1b1b1b;
-}
-
-.stats-label {
-    -fx-text-fill: #b0c7ff;
-    -fx-font-size: 14px;
-    -fx-font-family: "Consolas";
-}
-
-.title-label {
-    -fx-text-fill: #e0e0e0;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-}
-
+/* BOTTONI GENERICI RPG */
 .rpg-button {
     -fx-background-color: #1c1c1c;
     -fx-text-fill: #d6d6d6;
@@ -87,13 +33,50 @@ TextField, ComboBox {
     -fx-background-color: #2a2a2a;
 }
 
-.class-card {
+/* STATS */
+.stats-label {
+    -fx-text-fill: #9ecbff;
+    -fx-font-size: 18px;
+    -fx-font-family: "Consolas";
+    -fx-font-weight: bold;
+}
+
+/* TITOLI */
+.title-label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 24px;
+    -fx-font-family: "Georgia";
+    -fx-font-weight: bold;
+}
+
+/* TEXT FIELD + COMBO */
+.text-field, .combo-box {
     -fx-background-color: #1b1b1b;
     -fx-text-fill: #d0d0d0;
+    -fx-border-color: #444;
+    -fx-border-radius: 5;
+}
+
+/* HP BAR */
+.progress-bar {
+    -fx-background-color: #222;
+}
+
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, #ff0000, #cc0000);
+}
+
+/* CLASS CARDS */
+.class-card {
+    -fx-background-color: #1b1b1b;
+    -fx-text-fill: #ddd;
     -fx-font-size: 14px;
+    -fx-font-family: "Consolas";
+
     -fx-padding: 20;
     -fx-pref-width: 140;
     -fx-pref-height: 120;
+
     -fx-border-color: #444;
     -fx-border-radius: 8;
 }
@@ -102,29 +85,13 @@ TextField, ComboBox {
     -fx-background-color: #2a2a2a;
 }
 
-.stats-label {
-    -fx-text-fill: #9ecbff;
-    -fx-font-size: 18px;
-    -fx-font-family: "Consolas";
-    -fx-font-weight: bold;
+/* DISABLED BUTTON */
+.button:disabled {
+    -fx-opacity: 0.4;
 }
 
-.title-label {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 24px;
-    -fx-font-family: "Georgia";
-    -fx-font-weight: bold;
+/* CREATION LABEL */
+.creation-title {
+    -fx-text-fill: #bdbdbd;
+    -fx-font-size: 22px;
 }
-
-.class-card {
-    -fx-font-size: 14px;
-    -fx-font-family: "Consolas";
-    -fx-text-fill: #ddd;
-}
-
-nameField.setMaxWidth(180);
-nameField.setStyle(
-"-fx-background-color: #222;" +
-"-fx-text-fill: white;" +
-"-fx-prompt-text-fill: gray;"
-);
