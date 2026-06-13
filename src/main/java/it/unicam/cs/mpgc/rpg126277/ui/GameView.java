@@ -38,9 +38,11 @@ public class GameView extends Application {
     private Button mageCard;
     private CharacterClass selectedClass;
 
+
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
     private Label resultInfo = new Label();
+    private Label nameError = new Label();
 
     private UiState uiState = UiState.MENU;
     private VBox characterCreationRoot;
@@ -102,6 +104,9 @@ public class GameView extends Application {
         Label title = new Label("Create Character");
         title.getStyleClass().add("creation-title");
 
+        nameError.setStyle("-fx-text-fill: #ff4d4d;");
+        nameError.setText("");
+
         warriorCard = new Button("WARRIOR\nHP: 120\nATK: 15");
         mageCard = new Button("MAGE\nHP: 80\nATK: 10");
 
@@ -126,6 +131,7 @@ public class GameView extends Application {
                 15,
                 title,
                 nameField,
+                nameError,
                 classBox,
                 startGameBtn
         );
@@ -235,11 +241,13 @@ public class GameView extends Application {
     private void startNewGameWithCharacter() {
 
         String name = nameField.getText();
-        playerName = name;
-
         if (name == null || name.isBlank()) {
-            name = "Hero";
+            nameError.setText("Name cannot be empty");
+            return;
         }
+
+        nameError.setText("");
+        playerName = name;
 
         if (selectedClass == null) {
             selectedClass = CharacterClass.WARRIOR;
