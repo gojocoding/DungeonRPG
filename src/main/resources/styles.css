@@ -23,22 +23,27 @@
 
 /* BOTTONI GENERICI RPG */
 .rpg-button {
-    -fx-background-color: #1c1c1c;
-    -fx-text-fill: #d6d6d6;
-    -fx-font-size: 13px;
-    -fx-border-color: #3a3a3a;
+    -fx-background-color: #111;
+    -fx-text-fill: #ddd;
+    -fx-border-color: #444;
+    -fx-border-width: 2;
+    -fx-font-family: "Courier New";
+    -fx-padding: 10 20;
 }
 
+
 .rpg-button:hover {
-    -fx-background-color: #2a2a2a;
+    -fx-background-color: #222;
+    -fx-border-color: gold;
 }
 
 /* STATS */
 .stats-label {
-    -fx-text-fill: #9ecbff;
+    -fx-text-fill: #7db9ff;
     -fx-font-size: 18px;
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Courier New";
     -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, black, 2, 0.3, 0, 0);
 }
 
 /* TITOLI */
@@ -92,6 +97,7 @@
 
 /* CREATION LABEL */
 .creation-title {
-    -fx-text-fill: #bdbdbd;
-    -fx-font-size: 22px;
+    -fx-text-fill: #cfcfcf;
+    -fx-font-size: 26px;
+    -fx-font-family: "Georgia";
 }

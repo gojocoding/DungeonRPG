@@ -1,38 +1,57 @@
 package it.unicam.cs.mpgc.rpg126277.world;
 
+import it.unicam.cs.mpgc.rpg126277.model.Enemy;
+import it.unicam.cs.mpgc.rpg126277.model.EnemyFactory;
 import it.unicam.cs.mpgc.rpg126277.model.Player;
 
 import java.util.Random;
 
-public class CombatRoom extends AbstractCombatRoom {
+public class CombatRoom implements Room{
+    private Enemy enemy;
 
-    @Override
-    protected int baseHp(Player player) {
-        return 30 + new Random().nextInt(40);
+    public CombatRoom() {
+        enemy = EnemyFactory.randomEnemy();
     }
 
     @Override
-    protected int baseAttack(Player player) {
-        return 5 + new Random().nextInt(10);
-    }
+    public RoomResult enter(Player player) {
 
-    @Override
-    protected int xpReward(Player player) {
-        return 50;
-    }
+        player.takeDamage(enemy.getAttack());
 
-    @Override
-    protected String winMessage() {
-        return "Hai vinto il combattimento!";
-    }
+        enemy.takeDamage(player.getAttack());
 
-    @Override
-    protected String loseMessage() {
-        return "Sei morto in combattimento!";
+        if (!player.isAlive()) {
+
+            return new RoomResult(
+                    "The " + enemy.getName() + " defeated you!",
+                    RoomOutcome.GAME_OVER
+            );
+        }
+
+        if (!enemy.isAlive()) {
+
+            player.addXp(enemy.getXp());
+
+            return new RoomResult(
+                    "You defeated the " + enemy.getName(),
+                    RoomOutcome.NEXT_ROOM
+            );
+        }
+
+        return new RoomResult(
+                enemy.getName()
+                        + " HP: "
+                        + enemy.getHp(),
+                RoomOutcome.STAY
+        );
     }
 
     @Override
     public RoomType getType() {
         return RoomType.COMBAT;
+    }
+
+    public Enemy getEnemy() {
+        return enemy;
     }
 }

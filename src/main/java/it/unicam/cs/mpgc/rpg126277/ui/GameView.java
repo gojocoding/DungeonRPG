@@ -10,6 +10,7 @@ import it.unicam.cs.mpgc.rpg126277.world.DungeonGenerator;
 import it.unicam.cs.mpgc.rpg126277.world.Room;
 import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -33,12 +34,13 @@ public class GameView extends Application {
     private Button warriorCard;
     private Button mageCard;
     private CharacterClass selectedClass;
-    private String playerName;
+    private String currentSaveName;
 
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
     private Label resultInfo = new Label();
     private Label nameError = new Label();
+    private boolean gameStarted = false;
 
     private UiState uiState = UiState.MENU;
 
@@ -243,13 +245,15 @@ public class GameView extends Application {
     private void startNewGameWithCharacter() {
 
         String name = nameField.getText();
+        Player player = new Player(name, selectedClass);
         if (name == null || name.isBlank()) {
             nameError.setText("You must enter a name first");
             return;
         }
+        resultInfo.setText("A new adventure begins...");
+        Platform.runLater(() -> playTurn());
 
-        Player player = new Player(name, selectedClass);
-        playerName = name;
+        currentSaveName = name;
 
         GameState state = new GameState(
                 player,
@@ -272,7 +276,7 @@ public class GameView extends Application {
             );
         }
 
-        engine.loadGame(playerName);
+        engine.loadGame(currentSaveName);
         showGame();
     }
 
@@ -285,6 +289,12 @@ public class GameView extends Application {
     private void showGame() {
         scene.setRoot(gameRoot);
         uiState = UiState.PLAYING;
+
+        if (!gameStarted) {
+            resultInfo.setText("You enter the dungeon...");
+            gameStarted = true;
+        }
+
         updateUI();
     }
 

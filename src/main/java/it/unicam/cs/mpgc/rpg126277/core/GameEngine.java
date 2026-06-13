@@ -22,24 +22,25 @@ public class GameEngine {
     }
 
     public RoomResult nextTurn() {
-        Player player = gameState.getPlayer();
-        Room room = gameState.getCurrentRoom();
+            Player player = gameState.getPlayer();
+            Room room = gameState.getCurrentRoom();
 
-        if (isFinished()) {
-            return new RoomResult(
-                    "The dungeon has already ended...",
-                    RoomOutcome.GAME_OVER
-            );
+            if (isFinished()) {
+                return new RoomResult(
+                        "The dungeon has already ended...",
+                        RoomOutcome.GAME_OVER
+                );
+            }
+
+            RoomResult result = room.enter(player);
+
+            if (result.getOutcome() == RoomOutcome.NEXT_ROOM) {
+                gameState.nextRoom();
+            }
+
+            return result;
         }
 
-        RoomResult result = room.enter(player);
-
-        if (result.getOutcome() == RoomOutcome.NEXT_ROOM) {
-            gameState.nextRoom();
-        }
-
-        return result;
-    }
 
     public boolean isFinished() {
         return isGameOver() || isVictory();
