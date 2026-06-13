@@ -5,14 +5,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class DungeonGenerator{
-    public static List<Room> generateDungeon(int size)
+    public static List<Room> generateDungeon(int size) {
         List<Room> dungeon = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             dungeon.add(randomRoom());
         }
         dungeon.add(new BossRoom());
         return dungeon;
-
+    }
     private static Room randomRoom(){
         double r = Math.random();
         if(r < 0.4) {

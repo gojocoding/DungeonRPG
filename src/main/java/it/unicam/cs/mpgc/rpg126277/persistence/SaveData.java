@@ -16,6 +16,8 @@ public class SaveData {
     private int currentRoomIndex;
     private List<RoomType> dungeon;
 
+    public SaveData() {}
+
     public SaveData(String playerName, CharacterClass characterClass, int level, int xp, int hp, int maxHp, int attack, int currentRoomIndex, List<RoomType> dungeon) {
         this.playerName = playerName;
         this.characterClass = characterClass;
@@ -28,11 +30,13 @@ public class SaveData {
         this.dungeon = dungeon;
     }
 
-    public String getPlayerName(){
-            return playerName;
-        }
-        public CharacterClass getCharacterClass()
-        return characterClass;
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public CharacterClass getCharacterClass(){
+    return characterClass;
+}
     public int getLevel(){
         return level;
     }

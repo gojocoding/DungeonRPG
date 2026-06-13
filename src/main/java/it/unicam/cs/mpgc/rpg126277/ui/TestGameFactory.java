@@ -10,7 +10,7 @@ import java.util.List;
 
 
 public class TestGameFactory{
-    public static GameState createTestGame()
+    public static GameState createTestGame(){
         Player p = new Player("Test", CharacterClass.WARRIOR);
         List<Room> dungeon = DungeonGenerator.generateDungeon(4);
         return new GameState(p, dungeon);
