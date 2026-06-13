@@ -9,118 +9,185 @@ import it.unicam.cs.mpgc.rpg126277.world.Room;
 import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class GameView extends Application {
 
     private GameEngine engine;
+
+    private Scene scene;
+
+    private VBox menuRoot;
+    private BorderPane gameRoot;
+    private ProgressBar hpBar = new ProgressBar();
+
     private Button nextRoomBtn;
     private Button saveBtn;
     private Button loadBtn;
     private Button restartBtn;
-    private UiState uiState = UiState.MENU;
 
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
     private Label resultInfo = new Label();
 
+    private UiState uiState = UiState.MENU;
+
     @Override
     public void start(Stage stage) {
 
-        GameState state = TestGameFactory.createTestGame();
+        createMenu();
+        createGameUI();
 
-        engine = new GameEngine(state, new JsonSaveRepository());
-        uiState = UiState.PLAYING;
-        restartBtn = new Button("New Game");
+        scene = new Scene(menuRoot, 400, 300);
+
+        scene.getStylesheets().add(
+                getClass().getResource("/styles.css").toExternalForm()
+        );
+
+        stage.setScene(scene);
+        stage.setTitle("DungeonRPG");
+        stage.show();
+    }
+
+    // ---------------- MENU ----------------
+
+    private void createMenu() {
+
+        Button newGameBtn = new Button("New Game");
+        Button loadBtnMenu = new Button("Load");
+
+        newGameBtn.getStyleClass().add("menu-button");
+        loadBtnMenu.getStyleClass().add("menu-button");
+
+        newGameBtn.setOnAction(e -> startNewGame());
+        loadBtnMenu.setOnAction(e -> loadGame());
+
+        menuRoot = new VBox(10, newGameBtn, loadBtnMenu);
+
+        menuRoot.setStyle(
+                "-fx-background-image: url('/images/maenu.jfif');" +
+                        "-fx-background-size: cover;" +
+                        "-fx-background-position: center;" +
+
+                "-fx-alignment: center;" +
+                        "-fx-padding: 20;"
+        );
+    }
+
+    // ---------------- GAME UI ----------------
+
+    private void createGameUI() {
         nextRoomBtn = new Button("Next Room");
         saveBtn = new Button("Save");
-        loadBtn = new Button("Load");
+        restartBtn = new Button("Back to Menu");
 
-        uiState = UiState.PLAYING;
-        updateButtons();
+        playerInfo.getStyleClass().add("stats-label");
+        roomInfo.getStyleClass().add("stats-label");
+        resultInfo.getStyleClass().add("stats-label");
 
-        restartBtn.setOnAction(e -> {
-            GameState newState = TestGameFactory.createTestGame();
-            engine = new GameEngine(newState, new JsonSaveRepository());
-
-            uiState = UiState.PLAYING;
-            resultInfo.setText("New Game Started!");
-            updateUI();
-        });
+        nextRoomBtn.getStyleClass().add("rpg-button");
+        saveBtn.getStyleClass().add("rpg-button");
+        restartBtn.getStyleClass().add("rpg-button");
 
         nextRoomBtn.setOnAction(e -> playTurn());
-
         saveBtn.setOnAction(e -> engine.saveGame());
+        restartBtn.setOnAction(e -> showMenu());
 
-        loadBtn.setOnAction(e -> {
-            engine.loadGame("Test");
+        hpBar.setPrefWidth(200);
+        hpBar.setStyle("-fx-accent: red;");
 
-            uiState = UiState.PLAYING;
-            resultInfo.setText("Game Loaded!");
-            updateUI();
-        });
-
-        VBox root = new VBox(10,
+        // ---------------- INFO AREA (CENTRO) ----------------
+        VBox infoBox = new VBox(5,
                 playerInfo,
+                hpBar,
                 roomInfo,
-                resultInfo,
+                resultInfo
+        );
+
+        // ---------------- BOTTOM BAR ----------------
+        HBox bottomBar = new HBox(20);
+        bottomBar.setAlignment(Pos.CENTER);
+
+        bottomBar.getChildren().addAll(
                 nextRoomBtn,
                 saveBtn,
-                loadBtn,
                 restartBtn
         );
 
-        updateUI();
+        bottomBar.setStyle(
+                "-fx-padding: 15;" +
+                        "-fx-background-color: #1a1a1a;"
+        );
 
-        stage.setScene(new Scene(root, 400, 300));
-        stage.setTitle("RPG Dungeon Crawler");
-        stage.show();
+        // ---------------- ROOT LAYOUT (HUD STYLE) ----------------
+        BorderPane root = new BorderPane();
+
+        root.setCenter(infoBox);
+        root.setBottom(bottomBar);
+
+        root.setStyle(
+                "-fx-padding: 15;" +
+                        "-fx-background-color: #0b0b0b;"
+        );
+
+        gameRoot = root;
     }
+
+    // ---------------- FLOW ----------------
+
+    private void startNewGame() {
+        GameState state = TestGameFactory.createTestGame();
+        engine = new GameEngine(state, new JsonSaveRepository());
+
+        showGame();
+    }
+
+    private void loadGame() {
+        if (engine == null) {
+            engine = new GameEngine(
+                    TestGameFactory.createTestGame(),
+                    new JsonSaveRepository()
+            );
+        }
+
+        engine.loadGame("Test");
+        showGame();
+    }
+
+    private void showGame() {
+        scene.setRoot(gameRoot);
+        uiState = UiState.PLAYING;
+        updateUI();
+    }
+
+    private void showMenu() {
+        scene.setRoot(menuRoot);
+        uiState = UiState.MENU;
+    }
+
+    // ---------------- GAME LOGIC ----------------
 
     private void playTurn() {
 
         RoomResult result = engine.nextTurn();
-
         resultInfo.setText(result.getMessage());
 
         if (engine.isFinished()) {
             uiState = UiState.GAME_OVER;
-        } else {
-            uiState = UiState.PLAYING;
         }
 
         updateUI();
     }
 
-    private void updateButtons() {
-
-        switch (uiState) {
-
-            case MENU -> {
-                nextRoomBtn.setDisable(true);
-                saveBtn.setDisable(true);
-            }
-
-            case PLAYING -> {
-                nextRoomBtn.setDisable(false);
-                saveBtn.setDisable(false);
-            }
-
-            case GAME_OVER -> {
-                nextRoomBtn.setDisable(true);
-                saveBtn.setDisable(true);
-            }
-        }
-
-        loadBtn.setDisable(false);
-        restartBtn.setDisable(false);
-    }
-
     private void updateUI() {
+
+        if (engine == null) return;
 
         var state = engine.getGameState();
         var player = state.getPlayer();
@@ -131,20 +198,18 @@ public class GameView extends Application {
                         " LV: " + player.getLevel()
         );
 
-        if (uiState == UiState.PLAYING || uiState == UiState.GAME_OVER) {
-            Room current = state.getCurrentRoom();
-            roomInfo.setText("Room: " + current.getType());
-        } else {
-            roomInfo.setText("Room: -");
-        }
+        Room current = state.getCurrentRoom();
+        roomInfo.setText(current != null ? current.getType().toString() : "-");
 
         if (engine.isGameOver()) {
             resultInfo.setText(engine.isVictory() ? "🏆 YOU WIN!" : "☠ GAME OVER");
             uiState = UiState.GAME_OVER;
         }
-
-        updateButtons();
+        double hpRatio = (double) player.getHp() / player.getMaxHp();
+        hpBar.setProgress(hpRatio);
     }
+
+    // ---------------- STATE ----------------
 
     private enum UiState {
         MENU,

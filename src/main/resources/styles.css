@@ -1,0 +1,39 @@
+.menu-button {
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
+
+    -fx-background-color: linear-gradient(to bottom, #2b2b2b, #0d0d0d);
+    -fx-border-color: #555;
+    -fx-border-width: 2;
+
+    -fx-padding: 12 30 12 30;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+.menu-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #3a3a3a, #151515);
+    -fx-border-color: gold;
+    -fx-cursor: hand;
+}
+.rpg-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #666;
+
+    -fx-padding: 8 18 8 18;
+    -fx-background-radius: 6;
+}
+.stats-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4da6ff;
+    -fx-font-family: "Consolas";
+}
+.progress-bar {
+    -fx-background-color: #222;
+}
+
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, #ff0000, #cc0000);
+}
