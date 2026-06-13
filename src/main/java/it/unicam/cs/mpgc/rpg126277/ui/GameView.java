@@ -12,13 +12,9 @@ import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.scene.control.TextField;
 
 public class GameView extends Application {
 
@@ -37,10 +33,12 @@ public class GameView extends Application {
     private Button warriorCard;
     private Button mageCard;
     private CharacterClass selectedClass;
+    private String playerName;
 
     private Label playerInfo = new Label();
     private Label roomInfo = new Label();
     private Label resultInfo = new Label();
+    private Label nameError = new Label();
 
     private UiState uiState = UiState.MENU;
 
@@ -95,7 +93,20 @@ public class GameView extends Application {
     private void createCharacterCreation() {
 
         nameField = new TextField();
+        nameField.setTextFormatter(new TextFormatter<String>(change ->
+                change.getControlNewText().length() <= 15 ? change : null
+        ));
+        nameError.setStyle("-fx-text-fill: #ff4d4d;");
+        nameError.setText("");
+
         nameField.setPromptText("Enter your name");
+        nameField.setPrefWidth(200);
+        nameField.setMaxWidth(180);
+        nameField.setStyle(
+                "-fx-background-color: #222;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-prompt-text-fill: gray;"
+        );
 
         Label title = new Label("Create Character");
         title.getStyleClass().add("creation-title");
@@ -106,6 +117,7 @@ public class GameView extends Application {
         warriorCard.getStyleClass().add("class-card");
         mageCard.getStyleClass().add("class-card");
 
+        nameField.setText("");
         selectedClass = CharacterClass.WARRIOR;
 
         warriorCard.setOnAction(e -> selectClass(CharacterClass.WARRIOR));
@@ -124,6 +136,7 @@ public class GameView extends Application {
                 15,
                 title,
                 nameField,
+                nameError,
                 classBox,
                 startGameBtn
         );
@@ -230,15 +243,14 @@ public class GameView extends Application {
     private void startNewGameWithCharacter() {
 
         String name = nameField.getText();
-
         if (name == null || name.isBlank()) {
-            name = "Hero";
+            nameError.setText("You must enter a name first");
+            return;
         }
 
         Player player = new Player(name, selectedClass);
-        if (selectedClass == null) {
-            selectedClass = CharacterClass.WARRIOR;
-        }
+        playerName = name;
+
         GameState state = new GameState(
                 player,
                 DungeonGenerator.generateDungeon(5)
@@ -253,9 +265,6 @@ public class GameView extends Application {
     }
 
     private void loadGame() {
-
-        String name = "Test";
-
         if (engine == null) {
             engine = new GameEngine(
                     TestGameFactory.createTestGame(),
@@ -263,11 +272,13 @@ public class GameView extends Application {
             );
         }
 
-        engine.loadGame(name);
+        engine.loadGame(playerName);
         showGame();
     }
 
     private void showCharacterCreation() {
+        nameField.clear();
+        nameError.setText("");
         scene.setRoot(characterCreationRoot);
     }
 
