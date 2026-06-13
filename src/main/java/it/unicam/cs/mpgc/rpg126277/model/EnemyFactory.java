@@ -12,16 +12,14 @@ public class EnemyFactory {
             return new Enemy(
                     "Goblin",
                     40,
-                    6,
-                    40
-            );
+                    6
+              );
         }
 
         return new Enemy(
                 "Orc",
                 70,
-                12,
-                80
-        );
+                12
+         );
     }
 }

@@ -1,11 +1,7 @@
 package it.unicam.cs.mpgc.rpg126277.core;
 
-import it.unicam.cs.mpgc.rpg126277.model.GameState;
-import it.unicam.cs.mpgc.rpg126277.model.Player;
-import it.unicam.cs.mpgc.rpg126277.world.Room;
-import it.unicam.cs.mpgc.rpg126277.world.RoomFactory;
-import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
-import it.unicam.cs.mpgc.rpg126277.world.RoomOutcome;
+import it.unicam.cs.mpgc.rpg126277.model.*;
+import it.unicam.cs.mpgc.rpg126277.world.*;
 import it.unicam.cs.mpgc.rpg126277.persistence.SaveData;
 import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
 import it.unicam.cs.mpgc.rpg126277.persistence.SaveRepository;
@@ -15,6 +11,9 @@ import java.util.List;
 public class GameEngine {
     private GameState gameState;
     private final SaveRepository saveRepository;
+    private CombatState activeCombat;
+    private Enemy currentEnemy;
+    private boolean inCombat = false;
 
     public GameEngine(GameState gameState, SaveRepository saveRepository) {
         this.gameState = gameState;
@@ -22,25 +21,76 @@ public class GameEngine {
     }
 
     public RoomResult nextTurn() {
-            Player player = gameState.getPlayer();
-            Room room = gameState.getCurrentRoom();
+        Player player = gameState.getPlayer();
+        Room room = gameState.getCurrentRoom();
 
-            if (isFinished()) {
-                return new RoomResult(
-                        "The dungeon has already ended...",
-                        RoomOutcome.GAME_OVER
-                );
-            }
-
-            RoomResult result = room.enter(player);
-
-            if (result.getOutcome() == RoomOutcome.NEXT_ROOM) {
-                gameState.nextRoom();
-            }
-
-            return result;
+        if (isFinished()) {
+            return new RoomResult(
+                    "The dungeon has already ended...",
+                    RoomOutcome.GAME_OVER
+            );
         }
 
+        // se sei in combat NON avanzare stanza
+        if (inCombat) {
+            return new RoomResult(
+                    "Fight in progress!",
+                    RoomOutcome.COMBAT_CONTINUE
+            );
+        }
+
+        // entra in una stanza
+        if (room instanceof CombatRoom) {
+
+            currentEnemy = EnemyFactory.randomEnemy();
+            inCombat = true;
+
+            return new RoomResult(
+                    "A wild " + currentEnemy.getName() + " appears!",
+                    RoomOutcome.COMBAT_START
+            );
+        }
+
+        RoomResult result = room.enter(player);
+
+        if (result.getOutcome() == RoomOutcome.NEXT_ROOM) {
+            gameState.nextRoom();
+        }
+
+        return result;
+    }
+    public RoomResult attack() {
+        if (!inCombat || currentEnemy == null) {
+            return new RoomResult("No enemy here", RoomOutcome.NONE);
+        }
+
+        Player player = gameState.getPlayer();
+
+        currentEnemy.takeDamage(player.getAttack());
+
+        if (currentEnemy.isDead()) {
+            inCombat = false;
+            currentEnemy = null;
+            gameState.nextRoom();
+
+            return new RoomResult("Enemy defeated!", RoomOutcome.NEXT_ROOM);
+        }
+
+        player.takeDamage(currentEnemy.getAttack());
+
+        if (!player.isAlive()) {
+            inCombat = false;
+            currentEnemy = null;
+
+            return new RoomResult("You died!", RoomOutcome.GAME_OVER);
+        }
+
+        return new RoomResult("You hit the enemy!", RoomOutcome.COMBAT_CONTINUE);
+    }
+
+    public boolean isInCombat() {
+        return inCombat;
+    }
 
     public boolean isFinished() {
         return isGameOver() || isVictory();

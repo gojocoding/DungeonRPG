@@ -30,7 +30,7 @@ public class GameView extends Application {
     private Button saveBtn;
     private Button loadBtn;
     private Button restartBtn;
-
+    private Button attackBtn;
     private Button warriorCard;
     private Button mageCard;
     private CharacterClass selectedClass;
@@ -183,7 +183,12 @@ public class GameView extends Application {
         nextRoomBtn = new Button("Next Room");
         saveBtn = new Button("Save");
         restartBtn = new Button("Back to Menu");
-
+        attackBtn = new Button("Attack");
+        attackBtn.setOnAction(e -> {
+            RoomResult result = engine.attack();
+            resultInfo.setText(result.getMessage());
+            updateUI();
+        });
         playerInfo.getStyleClass().add("stats-label");
         roomInfo.getStyleClass().add("stats-label");
         resultInfo.getStyleClass().add("stats-label");
@@ -192,7 +197,11 @@ public class GameView extends Application {
         saveBtn.getStyleClass().add("rpg-button");
         restartBtn.getStyleClass().add("rpg-button");
 
-        nextRoomBtn.setOnAction(e -> playTurn());
+        nextRoomBtn.setOnAction(e -> {
+            RoomResult result = engine.nextTurn();
+            resultInfo.setText(result.getMessage());
+            updateUI();
+        });
         saveBtn.setOnAction(e -> engine.saveGame());
         restartBtn.setOnAction(e -> showMenu());
 
@@ -213,6 +222,7 @@ public class GameView extends Application {
 
         bottomBar.getChildren().addAll(
                 nextRoomBtn,
+                attackBtn,
                 saveBtn,
                 restartBtn
         );
@@ -243,17 +253,16 @@ public class GameView extends Application {
     }
 
     private void startNewGameWithCharacter() {
-
         String name = nameField.getText();
-        Player player = new Player(name, selectedClass);
+
         if (name == null || name.isBlank()) {
             nameError.setText("You must enter a name first");
             return;
         }
-        resultInfo.setText("A new adventure begins...");
-        Platform.runLater(() -> playTurn());
 
         currentSaveName = name;
+
+        Player player = new Player(name, selectedClass);
 
         GameState state = new GameState(
                 player,
@@ -264,6 +273,8 @@ public class GameView extends Application {
                 state,
                 new JsonSaveRepository()
         );
+
+        resultInfo.setText("A new adventure begins...");
 
         showGame();
     }
@@ -308,6 +319,7 @@ public class GameView extends Application {
     private void playTurn() {
 
         RoomResult result = engine.nextTurn();
+        if (engine == null) return;
         resultInfo.setText(result.getMessage());
 
         if (engine.isFinished()) {
@@ -340,6 +352,12 @@ public class GameView extends Application {
 
         double hpRatio = (double) player.getHp() / player.getMaxHp();
         hpBar.setProgress(hpRatio);
+        boolean inCombat = engine.isInCombat();
+
+        nextRoomBtn.setDisable(inCombat);
+
+        attackBtn.setVisible(inCombat);
+        attackBtn.setManaged(inCombat);
     }
 
     // ---------------- STATE ----------------

@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg126277.world;
 
+import it.unicam.cs.mpgc.rpg126277.model.CombatState;
 import it.unicam.cs.mpgc.rpg126277.model.Enemy;
 import it.unicam.cs.mpgc.rpg126277.model.EnemyFactory;
 import it.unicam.cs.mpgc.rpg126277.model.Player;
@@ -7,43 +8,34 @@ import it.unicam.cs.mpgc.rpg126277.model.Player;
 import java.util.Random;
 
 public class CombatRoom implements Room{
+    private CombatState combatState;
     private Enemy enemy;
-
-    public CombatRoom() {
-        enemy = EnemyFactory.randomEnemy();
-    }
 
     @Override
     public RoomResult enter(Player player) {
-
-        player.takeDamage(enemy.getAttack());
-
-        enemy.takeDamage(player.getAttack());
-
-        if (!player.isAlive()) {
-
-            return new RoomResult(
-                    "The " + enemy.getName() + " defeated you!",
-                    RoomOutcome.GAME_OVER
-            );
+        if (enemy == null) {
+            enemy = new Enemy("Goblin", 40, 6);
         }
 
-        if (!enemy.isAlive()) {
-
-            player.addXp(enemy.getXp());
-
-            return new RoomResult(
-                    "You defeated the " + enemy.getName(),
-                    RoomOutcome.NEXT_ROOM
+        if (combatState == null) {
+            Enemy enemy = new Enemy(
+                    "Goblin",
+                    40,
+                    8
             );
+
+            combatState = new CombatState(player, enemy);
         }
 
         return new RoomResult(
-                enemy.getName()
-                        + " HP: "
-                        + enemy.getHp(),
+                "Combat started vs " + combatState.getEnemy().getName(),
                 RoomOutcome.STAY
         );
+
+    }
+
+    public CombatState getCombatState() {
+        return combatState;
     }
 
     @Override
