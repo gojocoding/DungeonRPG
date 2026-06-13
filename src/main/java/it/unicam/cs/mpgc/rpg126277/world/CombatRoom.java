@@ -4,34 +4,35 @@ import it.unicam.cs.mpgc.rpg126277.model.Player;
 
 import java.util.Random;
 
-public class CombatRoom implements Room {
+public class CombatRoom extends AbstractCombatRoom {
+
+    @Override
+    protected int baseHp(Player player) {
+        return 30 + new Random().nextInt(40);
+    }
+
+    @Override
+    protected int baseAttack(Player player) {
+        return 5 + new Random().nextInt(10);
+    }
+
+    @Override
+    protected int xpReward(Player player) {
+        return 50;
+    }
+
+    @Override
+    protected String winMessage() {
+        return "Hai vinto il combattimento!";
+    }
+
+    @Override
+    protected String loseMessage() {
+        return "Sei morto in combattimento!";
+    }
+
     @Override
     public RoomType getType() {
         return RoomType.COMBAT;
-    }
-    @Override
-    public RoomResult enter(Player player) {
-
-        int enemyHp = 30 + new Random().nextInt(40);
-        int enemyAttack = 5 + new Random().nextInt(10);
-
-
-        while (player.isAlive() && enemyHp > 0) {
-
-            enemyHp -= player.getAttack();
-
-            if (enemyHp <= 0) {
-                player.addXp(50);
-                return new RoomResult("Hai vinto il combattimento!", false);
-            }
-
-            player.takeDamage(enemyAttack);
-
-            if (!player.isAlive()) {
-                return new RoomResult("Sei morto in combattimento!", true);
-            }
-        }
-
-        return new RoomResult("Fine combattimento", !player.isAlive());
     }
 }

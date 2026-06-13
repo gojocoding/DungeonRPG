@@ -1,20 +1,33 @@
 package it.unicam.cs.mpgc.rpg126277.world;
 
+import it.unicam.cs.mpgc.rpg126277.world.RoomOutcome;
+
 public class RoomResult {
-
     private String message;
-    private boolean playerDied;
+    private RoomOutcome outcome;
 
-    public RoomResult(String message, boolean playerDied) {
+    public RoomResult(String message, RoomOutcome outcome) {
         this.message = message;
-        this.playerDied = playerDied;
+        this.outcome = outcome;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public boolean isPlayerDied() {
-        return playerDied;
+    public RoomOutcome getOutcome() {
+        return outcome;
+    }
+
+    public boolean isGameOver() {
+        return outcome == RoomOutcome.GAME_OVER;
+    }
+
+    public boolean isNextRoom() {
+        return outcome == RoomOutcome.NEXT_ROOM;
+    }
+
+    public boolean isContinue() {
+        return outcome == RoomOutcome.CONTINUE;
     }
 }

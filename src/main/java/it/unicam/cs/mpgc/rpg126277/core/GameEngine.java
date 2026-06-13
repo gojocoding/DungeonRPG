@@ -5,6 +5,7 @@ import it.unicam.cs.mpgc.rpg126277.model.Player;
 import it.unicam.cs.mpgc.rpg126277.world.Room;
 import it.unicam.cs.mpgc.rpg126277.world.RoomFactory;
 import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
+import it.unicam.cs.mpgc.rpg126277.world.RoomOutcome;
 import it.unicam.cs.mpgc.rpg126277.persistence.SaveData;
 import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
 import it.unicam.cs.mpgc.rpg126277.persistence.SaveRepository;
@@ -12,19 +13,21 @@ import it.unicam.cs.mpgc.rpg126277.persistence.SaveRepository;
 import java.util.List;
 
 public class GameEngine {
-
     private GameState gameState;
     private final SaveRepository saveRepository;
 
-    public GameEngine(GameState gameState) {
+    public GameEngine(GameState gameState, SaveRepository saveRepository) {
         this.gameState = gameState;
-        this.saveRepository = new JsonSaveRepository();
+        this.saveRepository = saveRepository;
     }
 
     public RoomResult nextTurn() {
 
         if (isFinished()) {
-            return new RoomResult("Game finished", true);
+            return new RoomResult(
+                    "Game finished",
+                    RoomOutcome.GAME_OVER
+            );
         }
 
         Player player = gameState.getPlayer();
@@ -32,11 +35,15 @@ public class GameEngine {
 
         RoomResult result = room.enter(player);
 
-        if (!player.isAlive()) {
-            return new RoomResult("💀 Sei stato sconfitto...", true);
+        // gestione morte
+        if (result.getOutcome() == RoomOutcome.GAME_OVER) {
+            return result;
         }
 
-        gameState.nextRoom();
+        // avanzamento stanza solo se richiesto
+        if (result.getOutcome() == RoomOutcome.NEXT_ROOM) {
+            gameState.nextRoom();
+        }
 
         return result;
     }
@@ -58,13 +65,29 @@ public class GameEngine {
     }
 
     public void saveGame() {
+
         Player p = gameState.getPlayer();
 
-        SaveData data = new SaveData(p.getName(), p.getCharacterClass(), p.getLevel(), p.getXp(), p.getHp(), p.getMaxHp(), p.getAttack(), gameState.getCurrentRoomIndex(), gameState.getDungeon().stream().map(Room::getType).toList());
+        SaveData data = new SaveData(
+                p.getName(),
+                p.getCharacterClass(),
+                p.getLevel(),
+                p.getXp(),
+                p.getHp(),
+                p.getMaxHp(),
+                p.getAttack(),
+                gameState.getCurrentRoomIndex(),
+                gameState.getDungeon()
+                        .stream()
+                        .map(Room::getType)
+                        .toList()
+        );
+
         saveRepository.save(data);
     }
 
     public void loadGame(String playerName) {
+
         SaveData data = saveRepository.load(playerName);
 
         if (data == null) return;
@@ -73,13 +96,17 @@ public class GameEngine {
                 data.getPlayerName(),
                 data.getCharacterClass()
         );
+
         player.setLevel(data.getLevel());
         player.setXp(data.getXp());
         player.setHp(data.getHp());
         player.setMaxHp(data.getMaxHp());
         player.setAttack(data.getAttack());
 
-        List<Room> dungeon = data.getDungeon().stream().map(RoomFactory::create).toList();
+        List<Room> dungeon = data.getDungeon()
+                .stream()
+                .map(RoomFactory::create)
+                .toList();
 
         this.gameState = new GameState(player, dungeon);
         this.gameState.setCurrentRoomIndex(data.getCurrentRoomIndex());

@@ -6,6 +6,7 @@ import it.unicam.cs.mpgc.rpg126277.core.GameEngine;
 import it.unicam.cs.mpgc.rpg126277.model.GameState;
 import it.unicam.cs.mpgc.rpg126277.world.RoomResult;
 import it.unicam.cs.mpgc.rpg126277.world.Room;
+import it.unicam.cs.mpgc.rpg126277.persistence.JsonSaveRepository;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -29,21 +30,22 @@ public class GameView extends Application {
 
     @Override
     public void start(Stage stage) {
+
         GameState state = TestGameFactory.createTestGame();
-        engine = new GameEngine(state);
 
-
+        engine = new GameEngine(state, new JsonSaveRepository());
+        uiState = UiState.PLAYING;
         restartBtn = new Button("New Game");
         nextRoomBtn = new Button("Next Room");
         saveBtn = new Button("Save");
         loadBtn = new Button("Load");
 
-        uiState = UiState.MENU;
+        uiState = UiState.PLAYING;
         updateButtons();
 
         restartBtn.setOnAction(e -> {
             GameState newState = TestGameFactory.createTestGame();
-            engine = new GameEngine(newState);
+            engine = new GameEngine(newState, new JsonSaveRepository());
 
             uiState = UiState.PLAYING;
             resultInfo.setText("New Game Started!");
@@ -80,11 +82,12 @@ public class GameView extends Application {
     }
 
     private void playTurn() {
+
         RoomResult result = engine.nextTurn();
 
         resultInfo.setText(result.getMessage());
 
-        if (engine.isGameOver()) {
+        if (engine.isFinished()) {
             uiState = UiState.GAME_OVER;
         } else {
             uiState = UiState.PLAYING;
@@ -92,6 +95,7 @@ public class GameView extends Application {
 
         updateUI();
     }
+
     private void updateButtons() {
 
         switch (uiState) {
@@ -102,9 +106,8 @@ public class GameView extends Application {
             }
 
             case PLAYING -> {
-                boolean finished = engine.isGameOver();
-                nextRoomBtn.setDisable(finished);
-                saveBtn.setDisable(finished);
+                nextRoomBtn.setDisable(false);
+                saveBtn.setDisable(false);
             }
 
             case GAME_OVER -> {
@@ -142,6 +145,7 @@ public class GameView extends Application {
 
         updateButtons();
     }
+
     private enum UiState {
         MENU,
         PLAYING,

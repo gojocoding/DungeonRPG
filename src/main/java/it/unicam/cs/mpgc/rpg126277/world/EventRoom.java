@@ -5,32 +5,52 @@ import it.unicam.cs.mpgc.rpg126277.model.Player;
 import java.util.Random;
 
 public class EventRoom implements Room {
+    private static final Random RANDOM = new Random();
+
     @Override
     public RoomType getType() {
         return RoomType.EVENT;
     }
+
     @Override
     public RoomResult enter(Player player) {
 
-        Random rand = new Random();
-        int event = rand.nextInt(3);
+        int event = RANDOM.nextInt(3);
 
         switch (event) {
 
             case 0 -> {
                 player.heal(20);
-                return new RoomResult("Fonte magica: +20 HP", false);
+                return new RoomResult(
+                        "Fonte magica: +20 HP",
+                        RoomOutcome.NEXT_ROOM
+                );
             }
 
             case 1 -> {
                 player.takeDamage(15);
-                return new RoomResult("Trappola: -15 HP", !player.isAlive());
+
+                if (!player.isAlive()) {
+                    return new RoomResult(
+                            "Trappola mortale!",
+                            RoomOutcome.GAME_OVER
+                    );
+                }
+
+                return new RoomResult(
+                        "Trappola: -15 HP",
+                        RoomOutcome.NEXT_ROOM
+                );
             }
 
             default -> {
                 player.addXp(30);
-                return new RoomResult("Antico tomo: +30 XP", false);
+                return new RoomResult(
+                        "Antico tomo: +30 XP",
+                        RoomOutcome.NEXT_ROOM
+                );
             }
         }
     }
+
 }
