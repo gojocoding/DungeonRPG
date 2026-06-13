@@ -13,15 +13,11 @@ public class GameState {
     private Player player;
     private int currentRoomIndex;
     private List<Room> dungeon;
-    private boolean gameOver;
-    private boolean victory;
 
     public GameState(Player player, List<Room> dungeon) {
         this.player = player;
         this.dungeon = dungeon;
         this.currentRoomIndex = 0;
-        this.gameOver = false;
-        this.victory = false;
     }
 
     public void nextRoom() {
@@ -29,15 +25,14 @@ public class GameState {
     }
 
     public Room getCurrentRoom() {
+        if (currentRoomIndex >= dungeon.size()) {
+            return null;
+        }
         return dungeon.get(currentRoomIndex);
     }
 
     public Player getPlayer() {
         return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public int getCurrentRoomIndex() {
@@ -56,40 +51,22 @@ public class GameState {
         this.dungeon = dungeon;
     }
 
-    public boolean isGameOver() {
-        return gameOver;
-    }
-
-    public boolean isVictory() {
-        return victory;
-    }
-
-    public void setGameOver(boolean gameOver) {
-        this.gameOver = gameOver;
-    }
-
-    public void setVictory(boolean victory) {
-        this.victory = victory;
-    }
-
     public SaveData toSaveData() {
         List<RoomType> types = dungeon.stream()
                 .map(Room::getType)
-                .collect(Collectors.toList());
+                .toList();
 
-        return new SaveData(player, currentRoomIndex, gameOver, victory, types);
+        return new SaveData(player, currentRoomIndex, types);
     }
 
     public static GameState fromSaveData(SaveData data) {
 
         List<Room> dungeon = data.getDungeon().stream()
                 .map(RoomFactory::create)
-                .collect(Collectors.toList());
+                .toList();
 
         GameState state = new GameState(data.getPlayer(), dungeon);
         state.setCurrentRoomIndex(data.getCurrentRoomIndex());
-        state.setGameOver(data.isGameOver());
-        state.setVictory(data.isVictory());
 
         return state;
     }

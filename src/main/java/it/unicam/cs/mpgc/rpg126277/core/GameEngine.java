@@ -11,19 +11,17 @@ import it.unicam.cs.mpgc.rpg126277.persistence.SaveRepository;
 public class GameEngine {
 
     private GameState gameState;
+    private final SaveRepository saveRepository;
 
     public GameEngine(GameState gameState) {
         this.gameState = gameState;
         this.saveRepository = new JsonSaveRepository();
     }
 
-    public RoomResult playNextRoom() {
-        return nextTurn();
-    }
-
     public RoomResult nextTurn() {
-        if (gameState.isGameOver()) {
-            return new RoomResult("Game Over", true);
+
+        if (isFinished()) {
+            return new RoomResult("Game finished", true);
         }
 
         Player player = gameState.getPlayer();
@@ -32,15 +30,7 @@ public class GameEngine {
         RoomResult result = room.enter(player);
 
         if (!player.isAlive()) {
-            gameState.setGameOver(true);
-            gameState.setVictory(false);
             return new RoomResult("💀 Sei stato sconfitto...", true);
-        }
-
-        if (gameState.getCurrentRoomIndex() == gameState.getDungeon().size() - 1) {
-            gameState.setGameOver(true);
-            gameState.setVictory(true);
-            return new RoomResult("🏆 Hai sconfitto il boss!", false);
         }
 
         gameState.nextRoom();
@@ -48,19 +38,21 @@ public class GameEngine {
         return result;
     }
 
+    public boolean isFinished() {
+        return isGameOver() || isVictory();
+    }
+
     public boolean isGameOver() {
-        return gameState.isGameOver();
+        return gameState.getPlayer().getHp() <= 0;
     }
 
     public boolean isVictory() {
-        return gameState.isVictory();
+        return gameState.getCurrentRoomIndex() >= gameState.getDungeon().size();
     }
 
     public GameState getGameState() {
         return gameState;
     }
-
-    private final SaveRepository saveRepository;
 
     public void saveGame() {
         saveRepository.save(gameState.toSaveData());
@@ -69,11 +61,8 @@ public class GameEngine {
     public void loadGame(String playerName) {
         SaveData data = saveRepository.load(playerName);
 
-        if (data == null) {
-            return;
-        }
+        if (data == null) return;
 
         this.gameState = GameState.fromSaveData(data);
     }
-
 }
