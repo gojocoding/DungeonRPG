@@ -1,6 +1,6 @@
 package it.unicam.cs.mpgc.rpg126277.world;
 
-public enum RoomType {
+public enum RoomType{
     COMBAT,
     TREASURE,
     EVENT,

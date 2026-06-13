@@ -15,11 +15,11 @@ public class CombatState {
     }
 
     public RoomResult playerAttack() {
-        if (!playerTurn) {
+        if(!playerTurn) {
             return new RoomResult("E' il tuo turno!", RoomOutcome.STAY);
         }
         enemy.takeDamage(player.getAttack());
-        if (!enemy.isAlive()) {
+        if(!enemy.isAlive()) {
             return new RoomResult("Nemico sconfitto!!!", RoomOutcome.NEXT_ROOM);
         }
 
@@ -28,11 +28,11 @@ public class CombatState {
         return new RoomResult("Hai colpito il nemico!", RoomOutcome.STAY);
     }
     public RoomResult enemyTurn() {
-        if (playerTurn) {
+        if(playerTurn) {
             return new RoomResult("Aspetta il tuo turno!", RoomOutcome.STAY);
         }
         player.takeDamage(enemy.getAttack());
-        if (!player.isAlive()) {
+        if(!player.isAlive()) {
             return new RoomResult("Sei Morto...", RoomOutcome.GAME_OVER);
         }
         playerTurn = true;

@@ -21,21 +21,21 @@ public class GameEngine {
     }
 
     public RoomResult nextTurn() {
-        if (isFinished()) {
+        if(isFinished()) {
             return new RoomResult("Game over", RoomOutcome.GAME_OVER);
         }
 
-        if (inCombat) {
+        if(inCombat) {
             return new RoomResult("Combattimento in corso", RoomOutcome.COMBAT_CONTINUE);
         }
 
         Room room = gameState.getCurrentRoom();
 
-        if (room == null) {
+        if(room == null) {
             return new RoomResult("Dungeon finito", RoomOutcome.GAME_OVER);
         }
 
-        if (room.getType() == RoomType.COMBAT) {
+        if(room.getType() == RoomType.COMBAT) {
 
             currentEnemy = EnemyFactory.randomEnemy();
             inCombat = true;
@@ -46,7 +46,7 @@ public class GameEngine {
             );
         }
 
-        if (room.getType() == RoomType.BOSS) {
+        if(room.getType() == RoomType.BOSS) {
 
             currentEnemy = EnemyFactory.boss(gameState.getPlayer());
             inCombat = true;
@@ -57,20 +57,20 @@ public class GameEngine {
             );
         }
         RoomResult result = room.enter(gameState.getPlayer());
-        if (result.isNextRoom()) {
+        if(result.isNextRoom()) {
             gameState.nextRoom();
         }
         return result;
     }
 
     public RoomResult attack() {
-        if (!inCombat || currentEnemy == null) {
+        if(!inCombat || currentEnemy == null) {
             return new RoomResult("Non c'è nessun nemico", RoomOutcome.NONE);
         }
         Player player = gameState.getPlayer();
         currentEnemy.takeDamage(player.getAttack());
 
-        if (currentEnemy.isDead()) {
+        if(currentEnemy.isDead()) {
 
             boolean isBoss = gameState.getCurrentRoom() instanceof BossRoom;
 
@@ -93,7 +93,7 @@ public class GameEngine {
 
             player.takeDamage(currentEnemy.getAttack());
 
-            if (!player.isAlive()) {
+            if(!player.isAlive()) {
                 inCombat = false;
                 currentEnemy = null;
 
@@ -144,7 +144,7 @@ public class GameEngine {
 
     public void loadGame(String playerName) {
         SaveData data = saveRepository.load(playerName);
-        if (data == null) return;
+        if(data == null) return;
         Player player = new Player(
                 data.getPlayerName(),
                 data.getCharacterClass()

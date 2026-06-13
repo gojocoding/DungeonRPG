@@ -1,6 +1,6 @@
 package it.unicam.cs.mpgc.rpg126277.world;
 
-public enum RoomOutcome {
+public enum RoomOutcome{
     CONTINUE,
     NEXT_ROOM,
     STAY,

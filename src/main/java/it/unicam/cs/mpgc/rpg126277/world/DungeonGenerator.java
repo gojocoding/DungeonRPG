@@ -4,23 +4,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DungeonGenerator {
-    public static List<Room> generateDungeon(int size) {
+public class DungeonGenerator{
+    public static List<Room> generateDungeon(int size)
         List<Room> dungeon = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             dungeon.add(randomRoom());
         }
         dungeon.add(new BossRoom());
         return dungeon;
-    }
 
-    private static Room randomRoom() {
+    private static Room randomRoom(){
         double r = Math.random();
-        if (r < 0.4) {
+        if(r < 0.4) {
             return new CombatRoom();
-        } else if (r < 0.7) {
+        }
+        else if(r < 0.7) {
             return new TreasureRoom();
-        } else {
+        }
+        else{
             return new EventRoom();
         }
     }

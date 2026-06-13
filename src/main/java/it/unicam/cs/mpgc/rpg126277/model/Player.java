@@ -1,7 +1,6 @@
 package it.unicam.cs.mpgc.rpg126277.model;
 
 public class Player {
-
     private String name;
     private CharacterClass characterClass;
     private int level;
@@ -16,11 +15,11 @@ public class Player {
         this.level = 1;
         this.xp = 0;
 
-        if (characterClass == CharacterClass.WARRIOR) {
-            this.maxHp = 1200;
+        if(characterClass == CharacterClass.WARRIOR) {
+            this.maxHp = 120;
             this.attack = 15;
         }
-        else {
+        else{
             this.maxHp = 80;
             this.attack = 10;
         }

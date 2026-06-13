@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class CombatRoom implements Room{
     @Override
-    public RoomResult enter(Player player) {
+    public RoomResult enter(Player player){
         return new RoomResult(
                 "Appare un nemico!",
                 RoomOutcome.COMBAT_START
@@ -16,7 +16,7 @@ public class CombatRoom implements Room{
     }
 
     @Override
-    public RoomType getType() {
+    public RoomType getType(){
         return RoomType.COMBAT;
     }
 }

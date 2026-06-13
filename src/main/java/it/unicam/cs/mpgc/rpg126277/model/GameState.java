@@ -24,7 +24,7 @@ public class GameState {
     }
 
     public Room getCurrentRoom() {
-        if (currentRoomIndex >= dungeon.size()) {
+        if(currentRoomIndex >= dungeon.size()) {
             return null;
         }
         return dungeon.get(currentRoomIndex);

@@ -4,16 +4,16 @@ import it.unicam.cs.mpgc.rpg126277.model.Player;
 
 import java.util.Random;
 
-public class EventRoom implements Room {
+public class EventRoom implements Room{
     private static final Random RANDOM = new Random();
 
     @Override
-    public RoomType getType() {
+    public RoomType getType(){
         return RoomType.EVENT;
     }
 
     @Override
-    public RoomResult enter(Player player) {
+    public RoomResult enter(Player player){
         int event = RANDOM.nextInt(3);
         switch (event) {
             case 0 -> {

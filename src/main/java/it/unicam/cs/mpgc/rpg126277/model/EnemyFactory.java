@@ -5,7 +5,7 @@ import java.util.Random;
 public class EnemyFactory {
     public static Enemy randomEnemy() {
         Random r = new Random();
-        if (r.nextBoolean()) {
+        if(r.nextBoolean()) {
             return new Enemy(
                     "Goblin",
                     40,
